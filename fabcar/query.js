@@ -54,7 +54,7 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	const request = {
 		//targets : --- letting this default to the peers assigned to the channel
 		chaincodeId: 'fabcar',
-		fcn: 'queryAllCars',
+		fcn: 'queryAllData',
 		args: ['']
 	};
 
@@ -67,7 +67,7 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 		if (query_responses[0] instanceof Error) {
 			console.error("error from query = ", query_responses[0]);
 		} else {
-			console.log("Response is ", query_responses[0].toString());
+			console.log("Response is :", query_responses[0].toString());
 		}
 	} else {
 		console.log("No payloads were returned from query");

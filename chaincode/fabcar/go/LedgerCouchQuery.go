@@ -30,6 +30,27 @@ func firstQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString
 
 	return []byte(""), nil
 }
+func lastQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
+	resultsIterator, err := stub.GetQueryResult(queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer closeIterator(resultsIterator)
+
+	 x,_:=resultsIterator.Next()
+	for resultsIterator.HasNext() {
+		x,_=resultsIterator.Next()
+
+
+	}
+
+	if !resultsIterator.HasNext() {
+		fmt.Println(x)
+		return x.Value, nil
+	}
+
+	return []byte(""), nil
+}
 
 func decodeSingleResponse(jsonResponse []byte) *QueryResponse {
 	data := map[string]interface{}{}

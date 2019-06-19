@@ -36,10 +36,11 @@ type Sensor struct {
 	Temp string
 	Humidity string
 }
-type Key struct {
-	startKey string
-	endKey string
-}
+var startTime time.Time
+//type Key struct {
+//	startKey string
+//	endKey string
+//}
 /*
  * The Init method is called when the Smart Contract "fabcar" is instantiated by the blockchain network
  * Best practice is to have any Ledger initialization in separate function -- see initLedger()
@@ -61,6 +62,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.initLedger(APIstub)
 	} else if function == "sensorData" {
 		return s.sensorData(APIstub, args)
+	} else if function == "lastData" {
+		return  s.lastData(APIstub)
+	} else if function == "queryAllData" {
+		return s.queryAllData(APIstub)
 	}
 	return shim.Error("Invalid Smart Contract function name.")
 }
@@ -80,7 +85,17 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	return shim.Success([]byte("docId : "+docId+" temp : "+temp+" humidity : "+humidity))
+	return shim.Success([]byte(sensorJSON))
+}
+func (s *SmartContract) lastData(APIstub shim.ChaincodeStubInterface) sc.Response {
+	dataQuery:=newCouchQueryBuilder().addSelector("Doctype","SensorData").getQueryString()
+	data,_:=lastQueryValueForQueryString(APIstub,dataQuery)
+
+	var sensorData Sensor
+	_=json.Unmarshal(data,&sensorData)
+	 fmt.Println( "Sensordata ",sensorData)
+	return shim.Success([]byte(data))
+
 }
 func (s *SmartContract) sensorData(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
@@ -108,12 +123,14 @@ func (s *SmartContract) sensorData(APIstub shim.ChaincodeStubInterface, args []s
 
 func main() {
 
+
 	// Create a new Smart Contract
 	err := shim.Start(new(SmartContract))
+	startTime=time.Now()
 	if err != nil {
 		fmt.Printf("Error creating new Smart Contract: %s", err)
 	}
-	startkey:=time.Now().String()
+	//startkey:=time.Now().String()
 }
 //func (s *SmartContract) createCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 //
@@ -129,10 +146,12 @@ func main() {
 //	return shim.Success(nil)
 //}
 
-func (s *SmartContract) queryAllCars(APIstub shim.ChaincodeStubInterface) sc.Response {
 
-	startKey := "CAR0"
-	endKey := "CAR999"
+
+func (s *SmartContract) queryAllData(APIstub shim.ChaincodeStubInterface ) sc.Response {
+
+	startKey := startTime.String()
+	endKey := time.Now().String()
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -167,7 +186,7 @@ func (s *SmartContract) queryAllCars(APIstub shim.ChaincodeStubInterface) sc.Res
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- queryAllCars:\n%s\n", buffer.String())
+	fmt.Printf("- data are :\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }
