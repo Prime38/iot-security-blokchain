@@ -8,6 +8,7 @@ var bodyparser = require("body-parser")
 var port = process.env.PORT || 3000;
 var temp = null
 var humidity = null
+var piID=null
 app.use(express.json());
 app.use(express.static(__dirname + "/public"));
 app.use(bodyparser.urlencoded({
@@ -20,16 +21,14 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
 
     data = req.body
-    console.log('====================================');
+    console.log("data recieved from pi : ====================================");
     console.log(data);
     console.log('====================================');
     //res.sendFile(__dirname+"/index.html")
     if (data.temp != '') {
         temp = data.temp
-        console.log('====================================');
-        console.log(temp);
-        console.log('====================================');
         humidity = data.humidity
+        piID=data.piID
     }
     var Fabric_Client = require('fabric-client');
     var path = require('path');
@@ -83,10 +82,16 @@ app.post('/', (req, res) => {
             //targets: var default to the peer assigned to the client
             chaincodeId: 'fabcar',
             fcn: 'sensorData',
-            args: [temp, humidity],
+            args: [temp, humidity,piID],
             chainId: 'mychannel',
             txId: tx_id
         };
+        console.log("request");
+        console.log("--------------------");
+        console.log(request);
+        
+        
+        
         // send the transaction proposal to the peers
         return channel.sendTransactionProposal(request);
     }).then((results) => {
@@ -195,8 +200,10 @@ app.post('/', (req, res) => {
 var finalData={
     DocID:'',
     Doctype:'',
+    PiID:'',
     Humidity:'',
     Temp:''
+    
 }
 function latestData() {
     var Fabric_Client = require('fabric-client');
@@ -307,16 +314,6 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         console.log('user disconnected');
     })
-    // socket.on('data', function (msg) {
-    //     setInterval((msg)=>{
-    //         msg = finalData
-    //         console.log("message: " + msg);
-    //         io.emit('data', msg);
-    //     },300)
-        
-    // });
-
-
 });
 
 

@@ -41,15 +41,17 @@
                 timeArray.push(time)
                 temp.push(data.Temp)
                 humidity.push(data.Humidity)
-                cnt++;
-
+                console.log('====================================');
+                console.log(cnt);
+                console.log('====================================');
                 Plotly.extendTraces('chart', {
                     y: [temp]
                 }, [0])
-                if (cnt > 30) {
+                cnt++;
+                if (timeArray.length > 3000) {
                     Plotly.relayout('chart', {
                         xaxis: {
-                            range: [cnt - 30, cnt]
+                            range: [timeArray.length - 3000, timeArray.length]
                         }
                     })
                 }

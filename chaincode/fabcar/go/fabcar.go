@@ -33,6 +33,7 @@ type SmartContract struct {
 type Sensor struct {
 	Doctype string
 	DocID string
+	PiID string
 	Temp string
 	Humidity string
 }
@@ -74,9 +75,11 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	temp:="genesis"
 	humidity:="genesis"
+	piID:="genesis"
 	docId:=time.Now().String()
 	//docId:="12345"
-	var sensor=Sensor{"SensorData",docId,temp,humidity}
+	var sensor=Sensor{"SensorData",docId,piID,temp,humidity}
+	fmt.Println("genesis block: ",sensor)
 	sensorJSON,err:=json.Marshal(sensor)
 	if err != nil {
 		return shim.Error(err.Error())
@@ -93,20 +96,22 @@ func (s *SmartContract) lastData(APIstub shim.ChaincodeStubInterface) sc.Respons
 
 	var sensorData Sensor
 	_=json.Unmarshal(data,&sensorData)
-	 fmt.Println( "Sensordata ",sensorData)
+	fmt.Println( "Sensordata ",sensorData)
 	return shim.Success([]byte(data))
 
 }
 func (s *SmartContract) sensorData(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 2 {
+	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 	temp:=args[0]
 	humidity:=args[1]
+	piID:=args[2]
 	docId:=time.Now().String()
 	//docId:="12345"
-	var sensor=Sensor{"SensorData",docId,temp,humidity}
+	var sensor=Sensor{"SensorData",docId,piID,temp,humidity}
+	fmt.Println(sensor)
 	sensorJSON,err:=json.Marshal(sensor)
 	if err != nil {
 		return shim.Error(err.Error())
@@ -115,7 +120,7 @@ func (s *SmartContract) sensorData(APIstub shim.ChaincodeStubInterface, args []s
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	return shim.Success([]byte("docId : "+docId+" temp : "+temp+" humidity : "+humidity))
+	return shim.Success([]byte("docId : "+docId+"piID : "+piID+" temp : "+temp+" humidity : "+humidity))
 
 }
 
@@ -123,30 +128,13 @@ func (s *SmartContract) sensorData(APIstub shim.ChaincodeStubInterface, args []s
 
 func main() {
 
-
 	// Create a new Smart Contract
 	err := shim.Start(new(SmartContract))
 	startTime=time.Now()
 	if err != nil {
 		fmt.Printf("Error creating new Smart Contract: %s", err)
 	}
-	//startkey:=time.Now().String()
 }
-//func (s *SmartContract) createCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-//
-//	if len(args) != 5 {
-//		return shim.Error("Incorrect number of arguments. Expecting 5")
-//	}
-//
-//	var car = Car{Make: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
-//
-//	carAsBytes, _ := json.Marshal(car)
-//	APIstub.PutState(args[0], carAsBytes)
-//
-//	return shim.Success(nil)
-//}
-
-
 
 func (s *SmartContract) queryAllData(APIstub shim.ChaincodeStubInterface ) sc.Response {
 
