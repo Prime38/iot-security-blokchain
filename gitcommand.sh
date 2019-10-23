@@ -3,8 +3,8 @@
 #initialize git
 git init
 #config user
-git config --global user.name Prime38
-git config --global user.email shoumikprime@gmail.com
+git config --global user.name nammi31
+git config --global user.email happynews1997@gmail.com
 #see git status
 git status
 #add file to local git repo
