@@ -4,6 +4,7 @@ var http = require("http");
 const server = http.createServer(app);
 const path = require('path');
 var bodyparser = require("body-parser");
+var shell = require('shelljs');
 
 var multer  = require('multer')
    , cp = require('child_process')
@@ -28,23 +29,19 @@ app.set('view engine', 'ejs')
 
 
 // //set network configuaration
-// const { FileSystemWallet, Gateway } = require('fabric-network');
-// const ccpPath = path.resolve(__dirname, '..', '..', 'basic-network', 'connection.json');
-// const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
-// const ccp = JSON.parse(ccpJSON);
 
 
 //to show real time data changes
 var io = require('socket.io')(server);
 
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8000;
 var temp = null
 var humidity = null
 var piID=null
 
 
-// Home route
+// Home route 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 });
@@ -91,13 +88,13 @@ app.post('/', (req, res) => {
         fabric_client.setCryptoSuite(crypto_suite);
 
         // get the enrolled user from persistence, this user will sign all requests
-        return fabric_client.getUserContext('user1', true);
+        return fabric_client.getUserContext(username, true);
     }).then((user_from_store) => {
         if (user_from_store && user_from_store.isEnrolled()) {
-            console.log('Successfully loaded user1 from persistence');
+            console.log('Successfully loaded '+username+' from persistence.');
             member_user = user_from_store;
         } else {
-            throw new Error('Failed to get user1.... run registerUser.js');
+            throw new Error('Failed to get '+username+ '.... run registerUser.js');
         }
 
         // get a transaction id object based on the current user assigned to fabric client
@@ -238,76 +235,246 @@ app.get('/register', (req,res)=>{
     var username = req.body.username 
     var  msp_id = req.body.msp_id
     var affiliation = req.body.affiliation
-    var password = req.body.password
-    console.log('welcome '+ username +  ' msp_id : ' + msp_id+ ' affiliation : ' + affiliation + ' password : ' + password )
+    console.log('welcome '+ username +  ' msp_id : ' + msp_id+ ' affiliation : ' + affiliation )
    
-    
+        var cert, pubKey;
                   /*
           * Register and Enroll a user
           */
-            // async function main() {
-            //     try {
+         var Fabric_Client = require('fabric-client');
+         var Fabric_CA_Client = require('fabric-ca-client');
+         
+         var path = require('path');
+         var util = require('util');
+         var os = require('os');
+         
+         //
+         var fabric_client = new Fabric_Client();
+         var fabric_ca_client = null;
+         var admin_user = null;
+         var member_user = null;
+         var store_path = path.join(__dirname, 'hfc-key-store');
+         console.log(' Store path:'+store_path);
+         
+         // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
+         Fabric_Client.newDefaultKeyValueStore({ path: store_path
+         }).then((state_store) => {
+             // assign the store to the fabric client
+             fabric_client.setStateStore(state_store);
+             var crypto_suite = Fabric_Client.newCryptoSuite();
+             // use the same location for the state store (where the users' certificate are kept)
+             // and the crypto store (where the users' keys are kept)
+             var crypto_store = Fabric_Client.newCryptoKeyStore({path: store_path});
+             crypto_suite.setCryptoKeyStore(crypto_store);
+             fabric_client.setCryptoSuite(crypto_suite);
+             var	tlsOptions = {
+                 trustedRoots: [],
+                 verify: false
+             };
+             // be sure to change the http to https when the CA is running TLS enabled
+             fabric_ca_client = new Fabric_CA_Client('http://localhost:7054', null , '', crypto_suite);
+         
+             // first check to see if the admin is already enrolled
+             return fabric_client.getUserContext('admin', true);
+         }).then((user_from_store) => {
+             if (user_from_store && user_from_store.isEnrolled()) {
+                 console.log('Successfully loaded admin from persistence');
+                 admin_user = user_from_store;
+             } else {
+                 throw new Error('Failed to get admin.... run enrollAdmin.js');
+             }
+         
+             // at this point we should have the admin user
+             // first need to register the user with the CA server
+             return fabric_ca_client.register({enrollmentID: username, affiliation: affiliation,role: 'client'}, admin_user);
+         }).then((secret) => {
+             // next we need to enroll the user with CA server
+             console.log('Successfully registered '+username+' - secret:'+ secret);
+         
+             return fabric_ca_client.enroll({enrollmentID: username, enrollmentSecret: secret});
+         }).then((enrollment) => {
+           console.log('Successfully enrolled member user '+ username);
+           // GET THE CERTIFICATE
+           cert = enrollment.certificate.toString()
+         
+      
+           return fabric_client.createUser(
+              {username: username,
+              mspid: msp_id,
+              cryptoContent: { privateKeyPEM: enrollment.key.toBytes(), signedCertPEM: enrollment.certificate }
+              });
+         }).then((user) => {
+              member_user = user;
+              return fabric_client.setUserContext(member_user);
+        // user is successfully registered now send user info to Blockchain
+         }).then(()=>{
+              console.log(username+' was successfully registered and enrolled and is ready to interact with the fabric network');
+              res.send(username+' was successfully registered and enrolled..')
 
-            //         // Create a new file system based wallet for managing identities.
-            //         const walletPath = path.join(process.cwd(), 'wallet');
-            //         const wallet = new FileSystemWallet(walletPath);
-            //         console.log(`Wallet path: ${walletPath}`);
+               // GET THE PUBLIC KEY
+               var buf = fs.readFileSync('hfc-key-store/'+username)
+               var pubfileName =  JSON.parse(buf.toString()).enrollment.signingIdentity
+                   buf = fs.readFileSync('hfc-key-store/'+pubfileName+'-pub')
+                   pubKey = buf.toString()
+    
+              //  registration is successful
 
-            //         // Check to see if we've already enrolled the user.
-            //         const userExists = await wallet.exists(username);
-            //         if (userExists) {
-            //             console.log('An identity for the user '+username+' already exists in the wallet');
-            //             return;
-            //         }
+              // START INVOKE TRANSACTION
+              var fabric_client = new Fabric_Client();
+            // setup the fabric network
+            var channel = fabric_client.newChannel('mychannel');
+            var peer = fabric_client.newPeer('grpc://localhost:7051');
+            channel.addPeer(peer);
+            var order = fabric_client.newOrderer('grpc://localhost:7050')
+            channel.addOrderer(order);
 
-            //         // Check to see if we've already enrolled the admin user.
-            //         const adminExists = await wallet.exists('admin');
-            //         if (!adminExists) {
-            //             console.log('An identity for the admin user "admin" does not exist in the wallet');
-            //             console.log('Run the enrollAdmin.js application before retrying');
-            //             return;
-            //         }
-
-            //         // Create a new gateway for connecting to our peer node.
-            //         const gateway = new Gateway();
-            //         await gateway.connect(ccp, { wallet, identity: 'admin', discovery: { enabled: false } });
-
-            //         // Get the CA client object from the gateway for interacting with the CA.
-            //         const ca = gateway.getClient().getCertificateAuthority();
-            //         const adminIdentity = gateway.getCurrentIdentity();
-
-            //         // Register the user, enroll the user, and import the new identity into the wallet.
-            //         const secret = await ca.register({ affiliation: affiliation, enrollmentID: username, role: 'client' ,enrollmentSecret: password  }, adminIdentity);
-            //         const enrollment = await ca.enroll({ enrollmentID: username, enrollmentSecret: secret });
-            //         const userIdentity = X509WalletMixin.createIdentity(msp_id, enrollment.certificate, enrollment.key.toBytes());
-            //         wallet.import(username, userIdentity);
-            //         console.log('Successfully registered and enrolled user '+username+' and imported it into the wallet');
-            //         res.send('Successfully registered and enrolled user '+username)
-                    
-            //         //  /******** now I have to send username, pubkey,cert to chaincode *********/
-            //         //  const privkey =  enrollment.key.toBytes()
-            //         //  const cert = enrollment.certificate
-            //         //  // But how to get public key???? 
-            //         //  //one way -> reading from wallet path ..That's why I am using 1.4 version
-            //         //  cp.exec( 'cat wallet/'+username+'/*-pub' , function (err, pubKey, stderr) {
-            //         //       console.log('pubkey: ',pubKey)
-            //         //       await contract.submitTransaction('register', username,pubkey, cert );
-            //         //       console.log('Transaction has been submitted');
-  
-            //         //       // Disconnect from the gateway.
-            //         //       await gateway.disconnect();
-            //         //  })
-           
-
-            //     } catch (error) {
-            //         console.error('Failed to register user' + username+' : ${error} ');
-            //         process.exit(1);
-            //     }
-            // }
-
-            // main();
-        
-
+            //
+            var member_user = null;
+            var store_path = path.join(__dirname, 'hfc-key-store');
+            console.log('Store path:'+store_path);
+            var tx_id = null;
+              Fabric_Client.newDefaultKeyValueStore({ path: store_path
+              }).then((state_store) => {
+                  // assign the store to the fabric client
+                  fabric_client.setStateStore(state_store);
+                  var crypto_suite = Fabric_Client.newCryptoSuite();
+                  // use the same location for the state store (where the users' certificate are kept)
+                  // and the crypto store (where the users' keys are kept)
+                  var crypto_store = Fabric_Client.newCryptoKeyStore({path: store_path});
+                  crypto_suite.setCryptoKeyStore(crypto_store);
+                  fabric_client.setCryptoSuite(crypto_suite);
+              
+                  // get the enrolled user from persistence, this user will sign all requests
+                  return fabric_client.getUserContext(username, true);
+              }).then((user_from_store) => {
+                  if (user_from_store && user_from_store.isEnrolled()) {
+                      console.log('Successfully loaded '+username+ ' from persistence');
+                      member_user = user_from_store;
+                  } else {
+                      throw new Error('Failed to get '+username+ '.... run registerUser.js');
+                  }
+              
+                  // get a transaction id object based on the current user assigned to fabric client
+                  tx_id = fabric_client.newTransactionID();
+                  console.log("Assigning transaction_id: ", tx_id._transaction_id);
+              
+                  // createCar chaincode function - requires 5 args, ex: args: ['CAR12', 'Honda', 'Accord', 'Black', 'Tom'],
+                  // changeCarOwner chaincode function - requires 2 args , ex: args: ['CAR10', 'Dave'],
+                  // must send the proposal to endorsing peers
+                  userId = username.toString()
+                  console.log('args send to sendUserInfo Function : [userId, cert , pubKey] : [', userId, cert, pubKey +']')
+                  var request = {
+                      //targets: let default to the peer assigned to the client
+                      chaincodeId: 'fabcar',
+                      fcn: 'sendUserInfo',
+                      args: [ userId, cert,pubKey],
+                      chainId: 'mychannel',
+                      txId: tx_id
+                  };
+              
+                  // send the transaction proposal to the peers
+                  return channel.sendTransactionProposal(request);
+              }).then((results) => {
+                  var proposalResponses = results[0];
+                  var proposal = results[1];
+                  let isProposalGood = false;
+                  if (proposalResponses && proposalResponses[0].response &&
+                      proposalResponses[0].response.status === 200) {
+                          isProposalGood = true;
+                          console.log('Transaction proposal was good');
+                      } else {
+                          console.error('Transaction proposal was bad');
+                      }
+                  if (isProposalGood) {
+                      console.log(util.format(
+                          'Successfully sent Proposal and received ProposalResponse: Status - %s, message - "%s"',
+                          proposalResponses[0].response.status, proposalResponses[0].response.message));
+              
+                      // build up the request for the orderer to have the transaction committed
+                      var request = {
+                          proposalResponses: proposalResponses,
+                          proposal: proposal
+                      };
+              
+                      // set the transaction listener and set a timeout of 30 sec
+                      // if the transaction did not get committed within the timeout period,
+                      // report a TIMEOUT status
+                      var transaction_id_string = tx_id.getTransactionID(); //Get the transaction ID string to be used by the event processing
+                      var promises = [];
+              
+                      var sendPromise = channel.sendTransaction(request);
+                      promises.push(sendPromise); //we want the send transaction first, so that we know where to check status
+              
+                      // get an eventhub once the fabric client has a user assigned. The user
+                      // is required bacause the event registration must be signed
+                      let event_hub = channel.newChannelEventHub(peer);
+              
+                      // using resolve the promise so that result status may be processed
+                      // under the then clause rather than having the catch clause process
+                      // the status
+                      let txPromise = new Promise((resolve, reject) => {
+                          let handle = setTimeout(() => {
+                              event_hub.unregisterTxEvent(transaction_id_string);
+                              event_hub.disconnect();
+                              resolve({event_status : 'TIMEOUT'}); //we could use reject(new Error('Trnasaction did not complete within 30 seconds'));
+                          }, 3000);
+                          event_hub.registerTxEvent(transaction_id_string, (tx, code) => {
+                              // this is the callback for transaction event status
+                              // first some clean up of event listener
+                              clearTimeout(handle);
+              
+                              // now let the application know what happened
+                              var return_status = {event_status : code, tx_id : transaction_id_string};
+                              if (code !== 'VALID') {
+                                  console.error('The transaction was invalid, code = ' + code);
+                                  resolve(return_status); // we could use reject(new Error('Problem with the tranaction, event status ::'+code));
+                              } else {
+                                  console.log('The transaction has been committed on peer ' + event_hub.getPeerAddr());
+                                  resolve(return_status);
+                              }
+                          }, (err) => {
+                              //this is the callback if something goes wrong with the event registration or processing
+                              reject(new Error('There was a problem with the eventhub ::'+err));
+                          },
+                              {disconnect: true} //disconnect when complete
+                          );
+                          event_hub.connect();
+              
+                      });
+                      promises.push(txPromise);
+              
+                      return Promise.all(promises);
+                  } else {
+                      console.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
+                      throw new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
+                  }
+              }).then((results) => {
+                  console.log('Send transaction promise and event listener promise have completed');
+                  // check the results in the order the promises were added to the promise all list
+                  if (results && results[0] && results[0].status === 'SUCCESS') {
+                      console.log('Successfully sent transaction to the orderer.');
+                  } else {
+                      console.error('Failed to order the transaction. Error code: ' + results[0].status);
+                  }
+              
+                  if(results && results[1] && results[1].event_status === 'VALID') {
+                      console.log('Successfully committed the change to the ledger by the peer');
+                  } else {
+                      console.log('Transaction failed to be committed to the ledger due to ::'+results[1].event_status);
+                  }
+              }).catch((err) => {
+                  console.error('Failed to invoke successfully :: ' + err);
+              });
+              //  END INVOKE TRANSACTION
+         
+         }).catch((err) => {
+             console.error('Failed to register: ' + err);
+             if(err.toString().indexOf('Authorization') > -1) {
+                 console.error('Authorization failures may be caused by having admin credentials from a previous CA instance.\n' +
+                 'Try again after deleting the contents of the store directory '+store_path);
+             }
+         });
+         // REGISTRATION CODE COMPLETE
           
 })
   
@@ -316,32 +483,20 @@ app.get('/register', (req,res)=>{
         res.render('login')
     })
 
-/**** we have to do next  two things together at any cost ****/
-// actions after submitting username ,password in login page
-    app.post('/login', (req,res)=>{
-  
-      var username = req.body.username
-      var password = req.body.password
-  
-      
-      msg = 'username: '+username+'password: '+password 
-      console.log('msg: ',msg)
-  
-      //load public key from chaincode 
-      // now we just load it from our current local directory
-  
-      res.render('login')
-    })
-  
-// actions after uploading private key file in login page
+/**** ****/
+// actions after submitting username and private key in login page  
   app.post('/upload', upload.single('keyFile'), function (req, res, next) {
 
+        console.log( 'req.body : ', req.body)
     buf = req.file.buffer
     data = buf.toString('utf8')
-    console.log(data);
+        console.log(data);
+            
     let privkey = ursa.createPrivateKey(buf);
+    msg = 'userId' + req.body.username
+        console.log('msg : ', msg)
     let encryptedMsg = privkey.privateEncrypt(msg, 'utf8', 'base64'); 
-    console.log('encrypted message: ', encryptedMsg)
+        console.log('encrypted message: ', encryptedMsg)
 
      //load public key from chaincode database
   //    async function main() {
@@ -521,7 +676,7 @@ server.listen(port, err => {
     if (err) {
         throw err
     } else {
-        console.log('server started on port :3000');
+        console.log('server started on port : ',port);
     }
 
 })

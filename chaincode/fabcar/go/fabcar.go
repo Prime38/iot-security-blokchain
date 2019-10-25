@@ -13,13 +13,14 @@ import (
 	"fmt"
 	//"strings"
 
-	//"github.com/jmoiron/jsonq"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
+	//"github.com/jmoiron/jsonq"
 )
 
 // Define the Smart Contract structure
+
 type SmartContract struct {
 }
 
@@ -30,6 +31,12 @@ type SmartContract struct {
 //	Colour string `json:"colour"`
 //	Owner  string `json:"owner"`
 //}
+type User struct {
+	Doctype string
+	UserId string
+	Cert string
+	PubKey string
+}
 type Sensor struct {
 	Doctype string
 	DocID string
@@ -67,6 +74,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return  s.lastData(APIstub)
 	} else if function == "queryAllData" {
 		return s.queryAllData(APIstub)
+	}else if function == "sendUserInfo" {
+		return s.sendUserInfo(APIstub, args)
 	}
 	return shim.Error("Invalid Smart Contract function name.")
 }
@@ -90,6 +99,29 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	}
 	return shim.Success([]byte(sensorJSON))
 }
+func (s *SmartContract) sendUserInfo(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
+	}
+	userId:=args[0]
+	cert:=args[1]
+	pubKey:=args[2]
+    fmt.Println("userId , cert, pubKey ",userId, cert, pubKey)
+	var user = User{"user", userId, cert, pubKey }
+	fmt.Println(user)
+	userJSON,err:=json.Marshal(user)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	err = APIstub.PutState(userId, userJSON)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success([]byte("userId : "))
+
+}
+
 func (s *SmartContract) lastData(APIstub shim.ChaincodeStubInterface) sc.Response {
 	dataQuery:=newCouchQueryBuilder().addSelector("Doctype","SensorData").getQueryString()
 	data,_:=lastQueryValueForQueryString(APIstub,dataQuery)

@@ -1,16 +1,12 @@
 <html>
 
  <head>
-     <title> fabcar network</title>
+     <title> login form </title>
 
  </head>
  <body>
-    <form method="POST" action="/login">
-        <input type="text" name="username"  placeholder="UserName*"/>
-        <input type="text" name="password" placeholder="password*" />
-        <input type="submit" />
-    </form>
     <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="text" name="username"  placeholder="UserName*"/>
         <input type="file" name="keyFile" />
         <input type="submit">
     </form>
