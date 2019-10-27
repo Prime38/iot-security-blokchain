@@ -366,7 +366,7 @@ app.get('/register', (req,res)=>{
                   var request = {
                       //targets: let default to the peer assigned to the client
                       chaincodeId: 'fabcar',
-                      fcn: 'sendUserInfo',
+                      fcn: 'register',
                       args: [ userId, cert,pubKey],
                       chainId: 'mychannel',
                       txId: tx_id

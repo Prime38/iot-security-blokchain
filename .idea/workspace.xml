@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="63c650f2-950f-436f-aa8e-26db5f180195" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/chaincode/fabcar/go/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/chaincode/fabcar/go/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chaincode/fabcar/go/fabcar.go" beforeDir="false" afterPath="$PROJECT_DIR$/chaincode/fabcar/go/fabcar.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chaincode/fabcar/go/go_build_fabric_samples_chaincode_fabcar_go" beforeDir="false" afterPath="$PROJECT_DIR$/chaincode/fabcar/go/go_build_fabric_samples_chaincode_fabcar_go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabcar/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/fabcar/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabcar/invoke.js" beforeDir="false" afterPath="$PROJECT_DIR$/fabcar/invoke.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabcar/killNetwork.sh" beforeDir="false" afterPath="$PROJECT_DIR$/fabcar/killNetwork.sh" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1Si30PiTYU8RZOkAs1ryzndgbjq" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+</project>

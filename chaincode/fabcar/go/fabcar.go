@@ -32,10 +32,9 @@ type SmartContract struct {
 //	Owner  string `json:"owner"`
 //}
 type User struct {
-	Doctype string
-	UserId string
-	Cert string
-	PubKey string
+	// userId will give as key
+	Cert string     `json:"cert"`
+	PubKey string   `json:"pubkey"`
 }
 type Sensor struct {
 	Doctype string
@@ -74,8 +73,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return  s.lastData(APIstub)
 	} else if function == "queryAllData" {
 		return s.queryAllData(APIstub)
-	}else if function == "sendUserInfo" {
-		return s.sendUserInfo(APIstub, args)
+	}else if function == "register" {
+		return s.register(APIstub, args)
 	}
 	return shim.Error("Invalid Smart Contract function name.")
 }
@@ -99,26 +98,17 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	}
 	return shim.Success([]byte(sensorJSON))
 }
-func (s *SmartContract) sendUserInfo(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) register( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response {
 
 	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
-	userId:=args[0]
-	cert:=args[1]
-	pubKey:=args[2]
-    fmt.Println("userId , cert, pubKey ",userId, cert, pubKey)
-	var user = User{"user", userId, cert, pubKey }
+	var user = User{ Cert: args[1],PubKey:args[2]  }
 	fmt.Println(user)
-	userJSON,err:=json.Marshal(user)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	err = APIstub.PutState(userId, userJSON)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	return shim.Success([]byte("userId : "))
+	userAsBytes, _ := json.Marshal(user)
+	APIstub.PutState(args[0], userAsBytes)
+
+	return shim.Success(nil)
 
 }
 
@@ -158,15 +148,7 @@ func (s *SmartContract) sensorData(APIstub shim.ChaincodeStubInterface, args []s
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
 
-func main() {
 
-	// Create a new Smart Contract
-	err := shim.Start(new(SmartContract))
-	startTime=time.Now()
-	if err != nil {
-		fmt.Printf("Error creating new Smart Contract: %s", err)
-	}
-}
 
 func (s *SmartContract) queryAllData(APIstub shim.ChaincodeStubInterface ) sc.Response {
 
@@ -209,6 +191,15 @@ func (s *SmartContract) queryAllData(APIstub shim.ChaincodeStubInterface ) sc.Re
 	fmt.Printf("- data are :\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
+}
+func main() {
+
+	// Create a new Smart Contract
+	err := shim.Start(new(SmartContract))
+	startTime=time.Now()
+	if err != nil {
+		fmt.Printf("Error creating new Smart Contract: %s", err)
+	}
 }
 
 //func (s *SmartContract) changeCarOwner(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {

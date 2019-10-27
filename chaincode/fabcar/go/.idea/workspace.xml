@@ -5,10 +5,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabcar.go" beforeDir="false" afterPath="$PROJECT_DIR$/fabcar.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go_build_fabric_samples_chaincode_fabcar_go" beforeDir="false" afterPath="$PROJECT_DIR$/go_build_fabric_samples_chaincode_fabcar_go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go_build_thesis_chaincode_fabcar_go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../fabcar/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/views/form.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/views/form.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/views/login.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/views/login.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/invoke.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/invoke.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/killNetwork.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/killNetwork.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -78,13 +78,23 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/fabcar.go</url>
-          <line>63</line>
+          <line>62</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/fabcar.go</url>
-          <line>170</line>
+          <line>152</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../../../../thesis/byfn-wyfa/wyfa/chaincode/fabcar/go/fabcar.go</url>
+          <line>102</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/fabcar.go</url>
+          <line>114</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
