@@ -4,11 +4,8 @@
     <list default="true" id="3803cc34-58f8-4f70-9336-3255c892c6d3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabcar.go" beforeDir="false" afterPath="$PROJECT_DIR$/fabcar.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go_build_fabric_samples_chaincode_fabcar_go" beforeDir="false" afterPath="$PROJECT_DIR$/go_build_fabric_samples_chaincode_fabcar_go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go_build_thesis_chaincode_fabcar_go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../fabcar/invoke.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/invoke.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/killNetwork.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/killNetwork.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/query.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/query.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -83,7 +80,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/fabcar.go</url>
-          <line>152</line>
+          <line>163</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
@@ -93,7 +90,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/fabcar.go</url>
-          <line>114</line>
+          <line>125</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>

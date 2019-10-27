@@ -75,7 +75,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryAllData(APIstub)
 	}else if function == "register" {
 		return s.register(APIstub, args)
+	}else if function == "getPubkey" {
+		return s.getPubkey(APIstub, args)
 	}
+
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
@@ -111,7 +114,15 @@ func (s *SmartContract) register( APIstub shim.ChaincodeStubInterface, args []st
 	return shim.Success(nil)
 
 }
+func (s *SmartContract) getPubkey(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	userAsBytes, _ := APIstub.GetState(args[0])
+	return shim.Success(userAsBytes)
+}
 func (s *SmartContract) lastData(APIstub shim.ChaincodeStubInterface) sc.Response {
 	dataQuery:=newCouchQueryBuilder().addSelector("Doctype","SensorData").getQueryString()
 	data,_:=lastQueryValueForQueryString(APIstub,dataQuery)
