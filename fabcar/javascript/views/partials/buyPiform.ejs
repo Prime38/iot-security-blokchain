@@ -1,0 +1,45 @@
+<div id="buyPi" class="modal">
+  <div class="modal-content">
+    <div class='center'>
+      <h5 class="btn blue btn-large disabled waves-effect waves-light">Buy Pi</h5>
+    </div>
+    <div class="row">
+      <form class="col s12" action="/buyPi" method="POST">
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="piId" type="text" name="piId" value="pi123">
+            <label for="piId">PiId</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="ip" type="text" name="ip" value="192.168.160.1">
+            <label for="ip">Pi Ip Address</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="piUserName" type="text" name="piUserName" value="pi">
+            <label for="piUserName">Pi UserName</label>
+          </div>
+        </div>
+        
+
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="piPassword" type="piPassword" name="piPassword" value="resberrypi">
+            <label for="piPassword">Pi Password</label>
+          </div>
+        </div>
+        <div class="row right-align">
+          <div class="input-field col s12">
+            <!-- <button type="submit" class="btn btn-primary" name="login_user">Login</button> -->
+            <button class=" blue btn waves-effect waves-light" type="submit">Buy
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

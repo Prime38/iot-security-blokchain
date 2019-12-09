@@ -1,0 +1,78 @@
+<ul id="slide-out" class="sidenav">
+    <div class="center">
+        <h5 class="center">Your Cart</h5>
+    </div>
+    <div class="row center">
+        <div class="col s12 hoverable z-depth-5">
+            <h6>Added Products</h6>
+        </div>
+    </div>
+    <li>
+        <div class="divider"></div>
+    </li>
+    <li>
+        <div class="row">
+            <div class="col s2">qty</div>
+            <div class="col s7">name</div>
+            <div class="col s3 right-align">price</div>
+        </div>
+    </li>
+    <div class="divider"></div>
+    <form action="" method="post">
+        <li>
+
+            <div class="row">
+                <div class="col s2">
+                    <input type="number" name="qty1" id="qty1" value=0>
+                    <label for="qty1">QTY</label>
+                </div>
+                <div class="col s7"><%= details.products[0].name %></div>
+                <div class="col s3 right-align" id="val1"><%= details.products[0].price %></div>
+            </div>
+        </li>
+        <li>
+            <div class="row">
+                <div class="col s2">
+                    <input type="number" name="qty2" id="qty2" value=0>
+                    <label for="qty2">QTY</label>
+                </div>
+                <div class="col s7"><%= details.products[1].name %></div>
+                <div class="col s3 right-align" id="val2"><%= details.products[1].price %></div>
+            </div>
+        </li>
+        <li>
+            <div class="row">
+                <div class="col s2">
+                    <input type="number" name="qty3" id="qty3" value=0>
+                    <label for="qty3">QTY</label>
+                </div>
+                <div class="col s7"><%= details.products[2].name %></div>
+                <div class="col s3 right-align" id="val3"><%= details.products[2].price %></div>
+            </div>
+        </li>
+    </form>
+
+    <div class="divider"></div>
+    <form action="/checkout" method="post">
+        <div class="row">
+            <div class="col s2"></div>
+            <div class="col s4 btn btn-small hoverable blue">Total</div>
+            <div class="col s6">
+                <input type="number" name="totalprice" id="totalprice" value=0>
+                <label for="totalprice">QTY</label>
+            </div>
+        </div>
+        <div class="row right-align">
+            <div class="input-field col s12">
+                <button class=" blue btn waves-effect waves-light" type="submit">CheckOut
+                    <i class="material-icons right">airport_shuttle</i>
+                </button>
+            </div>
+        </div>
+    </form>
+    </li>
+
+</ul>
+<a href="#" data-target="slide-out"
+    class="sidenav-trigger  z-depth-5 red btn btn-large waves-effect waves-light tooltipped " data-tooltip="Cart"
+    data-activates="slide-out" data-position="bottom"><i class="material-icons">shopping_cart</i></a>

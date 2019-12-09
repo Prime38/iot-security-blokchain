@@ -1,0 +1,42 @@
+<div id="login" class="modal">
+    <div class="modal-content">
+        <div class='center'>
+            <h5 class="btn blue btn-large disabled waves-effect waves-light">Log In</h5>
+        </div>
+        <div class="row">
+            <form class="col s12" action="/login" method="POST" enctype="multipart/form-data">
+                 <div class="row">
+                    <div class="input-field col s12">
+                        <input id="name" type="text" name="name">
+                        <label for="name">Name</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="password" type="password" name="pass">
+                        <label for="password">Password</label>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="input-field col s12">
+                        <label for="keyFile">Choose Private Key File</label>
+                        <input id="keyFile" type="file" name="keyFile">
+                    </div>
+
+                </div>
+                <div class="row right-align">
+                    <div class="input-field col s12">
+                        <button class=" blue btn waves-effect waves-light" type="submit">Submit
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="center">
+                <h6>Don't have an account?</h6>
+                <a href="#SignIn" class=" center z-depth-5 cyan btn waves-effect waves-light modal-trigger"
+                    data-target="register">Register</a>
+            </div>
+        </div>
+    </div>
+</div>

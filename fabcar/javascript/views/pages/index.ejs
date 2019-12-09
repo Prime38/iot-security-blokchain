@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+    <title>Document</title>
+</head>
+
+<body>
+    <nav>
+        <!-- main navbar starts -->
+        <% include ../partials/nav %>
+        <!-- main navbar ends -->
+        <!-- Modal Structures -->
+        <!-- Sign-in form start -->
+        <% include ../partials/signinform %>
+        <!-- sign-in form ends -->
+        <!-- login-form starts -->
+        <% include ../partials/loginform %>
+        <!-- login for ends -->
+        <!-- login-form starts -->
+        <% include ../partials/buyPiform %>
+        <!-- login for ends -->
+    </nav>
+    <h1><%= details %></h1>
+
+    <br>
+    <a href="#buyPi" data-target="buyPi"
+        class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
+        data-tooltip="Account" data-position="bottom">
+        <% if (details.user) { %>
+            <i class="large material-icons"> add_to_queue</i>
+        <% } %>
+      </a>
+    
+
+
+    <!-- Compiled and minified JavaScript -->
+    <% include ../partials/scripts %>
+</body>
+
+</html>

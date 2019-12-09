@@ -1,0 +1,60 @@
+<div class="container blue" id="main-content">
+  <div class="row">
+    <div class="col s4 hoverable">
+      <div class="card z-depth-5">
+        <div class="card-image ">
+          <img class="responsive materialboxed" src="<%= details.products[0].url %>">
+
+          <a id="btn1" onclick="M.toast({html: '+35000$', classes: 'rounded'});"
+            class="btn-floating halfway-fab waves-effect waves-light red btn-floating pulse tooltipped"
+            data-tooltip="Add to cart" data-position="top"><i class="material-icons">add</i></a>
+        </div>
+        <span class="card-title"><%= details.products[0].name %></span>
+        <div class="right">
+          <h5 class="price-tag"><%= details.products[0].price %>$</h5>
+        </div>
+        <div class="card-content">
+          <p><%= details.products[0].details %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col s4 hoverable">
+      <div class="card z-depth-5 ">
+        <div class="card-image ">
+          <img class="responsive materialboxed" src="<%= details.products[1].url %>">
+
+          <a id="btn2" onclick="M.toast({html: '+85000$', classes: 'rounded'})"
+            class="btn-floating halfway-fab waves-effect waves-light red btn-floating pulse tooltipped"
+            data-tooltip="Add to cart" data-position="top"><i class="material-icons">add</i></a>
+
+        </div>
+        <span class="card-title"><%= details.products[1].name %> </span>
+        <div class="right">
+          <h5 class="price-tag"><%= details.products[1].price %>$</h5>
+        </div>
+        <div class="card-content">
+          <p><%= details.products[1].details %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col s4 hoverable">
+      <div class="card z-depth-5">
+        <div class="card-image ">
+          <img class="responsive materialboxed" src="<%= details.products[2].url %>">
+
+          <a id="btn3" onclick="M.toast({html: '+88000$', classes: 'rounded'})"
+            class="btn-floating halfway-fab waves-effect waves-light red btn-floating pulse tooltipped"
+            data-tooltip="Add to cart" data-position="top"><i class="material-icons">add</i></a>
+        </div>
+        <span class="card-title"><%= details.products[2].name %></span>
+        <div class="right">
+          <h5 class="price-tag"><%= details.products[2].price %>$</h5>
+        </div>
+        <div class="card-content">
+          <p><%= details.products[2].details %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

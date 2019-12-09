@@ -1,0 +1,20 @@
+<div class="nav-wrapper blue z-depth-3">
+  <a href="#" class="brand-logo center large">BetaBase</a>
+  <ul id="nav-mobile" class="right">
+    <li></li><a href="profile" data-target="accNo"
+      class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped" data-tooltip="Devices"
+      data-position="bottom">
+      <i class="large material-icons"> device_hub</i>
+    </a></li>
+    <li><a href="#login" data-target="login"
+        class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
+        data-tooltip="Account" data-position="bottom">
+        <% if (!details.user) { %>
+        <i class="large material-icons"> account_circle</i>
+        <% } %>
+        <% if (details.user) { %>
+        <%= details.user.name %>
+        <% } %>
+      </a></li>
+  </ul>
+</div>

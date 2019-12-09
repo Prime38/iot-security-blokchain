@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+    <title>Document</title>
+</head>
+
+<body>
+    <nav>
+        <!-- main navbar starts -->
+        <% include ../partials/nav %>
+        <!-- main navbar ends -->
+    </nav>
+    <h1>Name : <%= details.user.name%></h1>
+    <h5>
+        Certificate :<%= details.user.certificate%>
+    </h5>
+    <h5>
+        Public Key: <%= details.user.publicKey%>
+    </h5>
+</body>
+
+</html>
