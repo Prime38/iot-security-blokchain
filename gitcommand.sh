@@ -13,8 +13,8 @@ git add .
 #to add a single file `git add filename`
 #to remove file from git cahce `git rm --cached <file>...`
 #to commit `git commit -m "commit name"
-# git commit -m "initial commit"
+git commit -m "Using fabric v1.4.1"
 #add git to github repo
 git remote add origin https://github.com/Prime38/Thesis
 #push to git repo
-# git push -u origin master
+git push -u origin v1.4.1
