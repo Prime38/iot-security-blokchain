@@ -7,10 +7,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
+	"time"
 )
 
 // Define the Smart Contract structure
@@ -28,8 +28,9 @@ type User struct {
 	PubKey string
 	Password string
 }
-type Ownership struct{
+type OwnerShip struct{
 	Doctype string
+	OwnerShipId string
 	UserId string
 	UserCertificate string
 	UserPublicKey string
@@ -46,10 +47,17 @@ type Pi struct {
 	Password string
 	Port string
 	Owner string
-	DataAccess []string
 	Cert string
 	PubKey string
 }
+
+type DataAccessList struct {
+	Doctype string
+	UserId string
+	UserPublicKey string
+	AccessedPiIds []string
+}
+
 
 type Sensor struct {
 	Doctype string
@@ -89,7 +97,7 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
-func (s *SmartContract)buyPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
+func (s *SmartContract) buyPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
 	if len(args) != 7 {
 		return shim.Error("Incorrect number of arguments. Expecting 7")
 	}
@@ -98,8 +106,6 @@ func (s *SmartContract)buyPi( APIstub shim.ChaincodeStubInterface, args []string
 	userpubkey:=args[2]
 
 	piId:=args[3]
-	//piIp:=args[4]
-	//piUsername:=args[5]
 	piPass:=args[6]
 	//fetch pi
 	piQuery:=newCouchQueryBuilder().addSelector("Doctype","Pi").addSelector("PiId",piId).getQueryString()
@@ -120,7 +126,7 @@ func (s *SmartContract)buyPi( APIstub shim.ChaincodeStubInterface, args []string
 	APIstub.PutState(piId,piDataAsBytes)
 
 
-	var data=Ownership{"Ownership",userid,usercert,userpubkey,piId,piData.Cert,piData.PubKey}
+	var data=OwnerShip{"Ownership",userid+"."+piId,userid,usercert,userpubkey,piId,piData.Cert,piData.PubKey}
 	fmt.Println(data)
 	ownershipAsBytes,_:=json.Marshal(data)
 	APIstub.PutState(userid+piId,ownershipAsBytes)
@@ -129,7 +135,7 @@ func (s *SmartContract)buyPi( APIstub shim.ChaincodeStubInterface, args []string
 
 
 
-func (s *SmartContract)regPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
+func (s *SmartContract) regPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
 	if len(args) != 8 {
 		return shim.Error("Incorrect number of arguments. Expecting 8")
 	}
@@ -138,14 +144,28 @@ func (s *SmartContract)regPi( APIstub shim.ChaincodeStubInterface, args []string
 	uname:=args[2]
 	pass:=args[3]
 	port:=args[4]
-	owner:=args[5]
-	sharedwith:=[]string{owner}
+	owner:="Manufacturer"
 	cert:=args[6]
 	pubkey:=args[7]
-	var pi=Pi{"Pi",piId,ip,uname,pass,port,owner,sharedwith,cert,pubkey}
+	var pi=Pi{"Pi",piId,ip,uname,pass,port,owner,cert,pubkey}
 	fmt.Println(pi)
 	piAsBytes,_:=json.Marshal(pi)
 	APIstub.PutState(piId,piAsBytes)
+
+
+	userQuery:=newCouchQueryBuilder().addSelector("Doctype","User").addSelector("UserId","Manufacturer").getQueryString()
+	user,err:=lastQueryValueForQueryString(APIstub,userQuery)
+	if err!=nil{
+		fmt.Println("USER NOT FOUND")
+		return shim.Error(err.Error())
+	}
+	var userData User
+	_=json.Unmarshal(user,&userData)
+	var ownerShip=OwnerShip{"OwnerShip","Manufacturer."+piId,userData.UserId,userData.Cert,userData.PubKey,piId,cert,pubkey}
+	fmt.Println(ownerShip)
+	ownerShipAsBytes,_:=json.Marshal(ownerShip)
+	APIstub.PutState(ownerShip.OwnerShipId,ownerShipAsBytes)
+
 	return shim.Success(piAsBytes)
 }
 
@@ -179,8 +199,10 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
 		fmt.Println("USER NOT FOUND")
 		return shim.Error(err.Error())
 	}
+
 	var userData User
 	_=json.Unmarshal(user,&userData)
+
 	if userData.Password!=pass{
 		return shim.Error("Password Doesn't Match ")
 	}
@@ -239,23 +261,7 @@ func (s *SmartContract) sensorData(APIstub shim.ChaincodeStubInterface, args []s
 
 }
 
-//func (s *SmartContract) registerPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response {
-//
-//	if len(args) != 4 {
-//		return shim.Error("Incorrect number of arguments. Expecting 4")
-//	}
-//	piID:=args[0]
-//	cert:=args[1]
-//	pubKey:=args[2]
-//	namePass:=args[3]
-//	var pi = Pi{ "Pi",piID,cert,pubKey,namePass  }
-//	fmt.Println(pi)
-//	userAsBytes, _ := json.Marshal(pi)
-//	APIstub.PutState(args[0], userAsBytes)
-//
-//	return shim.Success(nil)
-//
-//}
+
 // The main function is only relevant in unit test mode. Only included here for completeness.
 func main() {
 

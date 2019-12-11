@@ -5720,11 +5720,8 @@
       <change beforePath="$PROJECT_DIR$/github.com/uudashr/gopkgs/vendor_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/github.com/uudashr/gopkgs/vendor_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go_build_Thesis1_4_1_chaincode_fabcar_go" beforeDir="false" afterPath="$PROJECT_DIR$/go_build_Thesis1_4_1_chaincode_fabcar_go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../jmoiron/jsonq" beforeDir="false" afterPath="$PROJECT_DIR$/../../jmoiron/jsonq" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/pages/index.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/pages/index.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../gitcommand.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../gitcommand.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/setNetwork.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/setNetwork.sh" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -5739,6 +5736,11 @@
   </component>
   <component name="ProjectId" id="1StLe5lqUcIscqn9PxQZW2UOTT4" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
@@ -5746,7 +5748,7 @@
     <property name="go.tried.to.enable.integration.dep.integrator" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../GoLibraries/Heap" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -5755,18 +5757,6 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager">
     <configuration name="go build Thesis1.4.1/chaincode/fabcar/go" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
@@ -5778,6 +5768,18 @@
       <output_directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -5794,5 +5796,27 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1118" y="311" width="424" height="480" key="FileChooserDialogImpl" timestamp="1576030442321">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="1118" y="311" width="424" height="480" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1576030442321" />
+    <state width="883" height="278" key="GridCell.Tab.0.bottom" timestamp="1576073028442">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="883" height="278" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1576073028442" />
+    <state width="883" height="278" key="GridCell.Tab.0.center" timestamp="1576073028442">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="883" height="278" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1576073028442" />
+    <state width="883" height="278" key="GridCell.Tab.0.left" timestamp="1576073028441">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="883" height="278" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1576073028441" />
+    <state width="883" height="278" key="GridCell.Tab.0.right" timestamp="1576073028442">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="883" height="278" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1576073028442" />
   </component>
 </project>
