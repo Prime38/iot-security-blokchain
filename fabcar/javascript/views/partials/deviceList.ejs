@@ -1,0 +1,32 @@
+<% if (details.user.OwnedDevices) { %>
+<% if (details.user.OwnedDevices.length > 0){%>
+<div class="container blue" id="main-content">
+    <div class="row ">
+        <ul class="collection with-header">
+            <li class="collection-header">
+                <h4>Your Devices</h4>
+            </li>
+            <% for (var i = 0; i < details.user.OwnedDevices.length; i++) { %>
+            <li class="collection-item">
+                <div><%= details.user.OwnedDevices[i]%>
+
+                    <a id="myButton"
+                        class="right z-depth-5 light-blue btn btn-large waves-effect waves-light tooltipped"
+                        data-tooltip="SeeData" data-position="bottom"><i class="material-icons">assessment</i></a>
+                    <a href="#transfer" data-target="transfer"
+                        class="modal-trigger right z-depth-5 light-blue btn btn-large waves-effect waves-light"><i
+                            class="material-icons">transfer_within_a_station</i></a>
+                    <script type="text/javascript">
+                        document.getElementById("myButton").onclick = function () {
+                            location.href = "/sendData";
+                        };
+                    </script>
+                </div>
+            </li>
+            <% } %>
+
+        </ul>
+    </div>
+</div>
+<%}%>
+<% } %>

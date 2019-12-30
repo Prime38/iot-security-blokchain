@@ -1,0 +1,44 @@
+<div id="transfer" class="modal">
+    <div class="modal-content">
+      <div class='center'>
+        <h5 class="btn blue btn-large disabled waves-effect waves-light">Sign In</h5>
+      </div>
+      <div class="row">
+        <form class="col s12" action="/transfer" method="POST">
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="name" type="text" name="name">
+              <label for="name">Name</label>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="password" type="password" name="pass">
+              <label for="password">Password</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="mspId" type="text" name="mspId" value="Org1MSP">
+              <label for="mspId">MspId</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="affiliation" type="text" name="affiliation" value="org1.department1">
+              <label for="affiliation">Affiliation </label>
+            </div>
+          </div>
+          <div class="row right-align">
+            <div class="input-field col s12">
+              <!-- <button type="submit" class="btn btn-primary" name="login_user">Login</button> -->
+              <button class=" blue btn waves-effect waves-light" type="submit">SignIn
+                <i class="material-icons right">send</i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

@@ -27,6 +27,9 @@ type User struct {
 	Cert string
 	PubKey string
 	Password string
+	OwnedDevices []string
+	AccessedDevice []string
+
 }
 type OwnerShip struct{
 	Doctype string
@@ -57,8 +60,6 @@ type DataAccessList struct {
 	UserPublicKey string
 	AccessedPiIds []string
 }
-
-
 type Sensor struct {
 	Doctype string
 	DocID string
@@ -66,6 +67,8 @@ type Sensor struct {
 	Temp string
 	Humidity string
 }
+
+
 /*
  * The Init method is called when the Smart Contract "fabcar" is instantiated by the blockchain network
  * Best practice is to have any Ledger initialization in separate function -- see initLedger()
@@ -97,6 +100,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
+
+//Unfinished Function
 func (s *SmartContract) buyPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
 	if len(args) != 7 {
 		return shim.Error("Incorrect number of arguments. Expecting 7")
@@ -161,6 +166,10 @@ func (s *SmartContract) regPi( APIstub shim.ChaincodeStubInterface, args []strin
 	}
 	var userData User
 	_=json.Unmarshal(user,&userData)
+	userData.OwnedDevices=append(userData.OwnedDevices,piId)
+	userAsbytes,_:=json.Marshal(userData)
+	APIstub.PutState(userData.UserId,userAsbytes)
+
 	var ownerShip=OwnerShip{"OwnerShip","Manufacturer."+piId,userData.UserId,userData.Cert,userData.PubKey,piId,cert,pubkey}
 	fmt.Println(ownerShip)
 	ownerShipAsBytes,_:=json.Marshal(ownerShip)
@@ -178,7 +187,7 @@ func (s *SmartContract) register( APIstub shim.ChaincodeStubInterface, args []st
 	cert:=args[1]
 	pubKey:=args[2]
 	pass:=args[3]
-	var user = User{ "User",userID,cert,pubKey,pass  }
+	var user = User{ "User",userID,cert,pubKey,pass ,[]string{},[]string{} }
 	fmt.Println(user)
 	userAsBytes, _ := json.Marshal(user)
 	APIstub.PutState(args[0], userAsBytes)
@@ -199,10 +208,8 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
 		fmt.Println("USER NOT FOUND")
 		return shim.Error(err.Error())
 	}
-
 	var userData User
 	_=json.Unmarshal(user,&userData)
-
 	if userData.Password!=pass{
 		return shim.Error("Password Doesn't Match ")
 	}
