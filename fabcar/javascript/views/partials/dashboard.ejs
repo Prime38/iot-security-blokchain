@@ -1,0 +1,62 @@
+<% if (details.allDevices) { %>
+
+<div class="container blue" id="main-content">
+    <div class="row">
+        <% details.allDevices.forEach(function(device){%>
+        <div class="col s12 m6">
+            <div class="card blue lighten-2">
+                <div class="card-image  waves-effect waves-block waves-light">
+                    <img class="activator" src="/views/images/TemperatureSensing.jpg">
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4 " style="font-size: medium;"><i class="material-icons right">more_vert</i>Device ID:
+                        <%= device.PiId %></span>
+                        <span class="card-title activator grey-text text-darken-4 " style="font-size: medium;">Owner:
+                            <%= device.Owner %></span>
+                    <p><%= device.Description %></p>
+                </div>
+                <div class="card-action">
+                    <% if (details.user) {%>
+                    <div class="row">
+                        <form class="col s6" action="/transfer" method="POST">
+                            <input type="hidden" id="ownerId" type="text" name="ownerId" value="<%= device.Owner %>">
+                            <input type="hidden" id="deviceId" type="text" name="deviceId" value="<%= device.PiId %>">
+                            <input type="hidden" id="buyerId" type="text" name="buyerId"
+                                value="<%= details.user.name %>">
+                            <div class="row center">
+                                <div class="input-field col s12">
+                                    <button class=" blue btn waves-effect waves-light" type="submit">Buy This Device
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="col s6" action="/transfer" method="POST">
+                            <input type="hidden" id="ownerId" type="text" name="ownerId" value="<%= device.Owner %>">
+                            <input type="hidden" id="deviceId" type="text" name="deviceId" value="<%= device.PiId %>">
+                            <input type="hidden" id="buyerId" type="text" name="buyerId"
+                                value="<%= details.user.name %>">
+                            <div class="row center">
+                                <div class="input-field col s12">
+                                    <button class=" blue btn waves-effect waves-light" type="submit">Get Data
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <%} else{%>
+                    <p>Login To Buy or get data of a device</p>
+                    <%}%>
+
+                    <!-- <a href="#" onclick="myFunction('<%= device.PiId %>')">This is a link</a> -->
+                </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4" style="font-size: medium;"><%= device.PiId %><i
+                            class="material-icons right">close</i></span>
+                    <p style="color: black;"><%= device.Description %></p>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+</div>
+<% } %>

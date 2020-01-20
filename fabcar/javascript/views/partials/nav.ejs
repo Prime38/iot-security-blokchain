@@ -1,20 +1,40 @@
 <div class="nav-wrapper blue z-depth-3">
+  <ul id="nav-mobile" class="left">
+    <li></li><a id="homebtn"
+      class=" z-depth-1 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped" data-tooltip="HOME"
+      data-position="bottom">
+      <i class="large material-icons"> home</i>
+    </a></li>
+
+  </ul>
   <a href="#" class="brand-logo center large">BetaBase</a>
   <ul id="nav-mobile" class="right">
-    <li></li><a href="profile" data-target="accNo"
-      class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped" data-tooltip="Devices"
-      data-position="bottom">
-      <i class="large material-icons"> device_hub</i>
-    </a></li>
+    <% if (!details.user) { %>
+
     <li><a href="#login" data-target="login"
         class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
-        data-tooltip="Account" data-position="bottom">
-        <% if (!details.user) { %>
+        data-tooltip="Login" data-position="bottom">
+
         <i class="large material-icons"> account_circle</i>
-        <% } %>
-        <% if (details.user) { %>
-        <%= details.user.name %>
-        <% } %>
       </a></li>
+    <% } %>
+
+    <% if (details.user) { %>
+    <li><a id="profilebtn" 
+        class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
+        data-tooltip="Profile" data-position="bottom">
+        <%=details.user.name%>
+        <% include ../partials/notifications %>
+      </a></li>
+    <li><a href="#login" data-target="login"
+        class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
+        data-tooltip="Logout" data-position="bottom">
+        <i class="large material-icons"> account_circle</i>
+      </a></li>
+
+    <% } %>
+    
+
   </ul>
+  
 </div>

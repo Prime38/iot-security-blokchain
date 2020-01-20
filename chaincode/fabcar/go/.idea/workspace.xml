@@ -5722,10 +5722,15 @@
       <change beforePath="$PROJECT_DIR$/go_build_Thesis1_4_1_chaincode_fabcar_go" beforeDir="false" afterPath="$PROJECT_DIR$/go_build_Thesis1_4_1_chaincode_fabcar_go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../jmoiron/jsonq" beforeDir="false" afterPath="$PROJECT_DIR$/../../jmoiron/jsonq" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/invoke.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/invoke.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/setNetwork.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/setNetwork.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/pages/index.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/pages/index.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/pages/profile.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/pages/profile.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/container.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/container.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/deviceList.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/deviceList.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/head.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/head.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/nav.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/nav.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/scripts.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/scripts.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/transfer.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../fabcar/javascript/views/partials/transfer.ejs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -5807,30 +5812,46 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="1118" y="311" width="424" height="480" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1576030442321" />
-    <state width="1874" height="257" key="GridCell.Tab.0.bottom" timestamp="1577016107058">
+    <state width="1874" height="344" key="GridCell.Tab.0.bottom" timestamp="1579244139424">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="1874" height="257" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1577016107058" />
-    <state width="1874" height="257" key="GridCell.Tab.0.center" timestamp="1577016107057">
+    <state width="1874" height="344" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139424" />
+    <state width="1874" height="344" key="GridCell.Tab.0.center" timestamp="1579244139424">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="1874" height="257" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1577016107057" />
-    <state width="1874" height="257" key="GridCell.Tab.0.left" timestamp="1577016107057">
+    <state width="1874" height="344" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139424" />
+    <state width="1874" height="344" key="GridCell.Tab.0.left" timestamp="1579244139423">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="1874" height="257" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1577016107057" />
-    <state width="1874" height="257" key="GridCell.Tab.0.right" timestamp="1577016107058">
+    <state width="1874" height="344" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139423" />
+    <state width="1874" height="344" key="GridCell.Tab.0.right" timestamp="1579244139424">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="1874" height="257" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1577016107058" />
+    <state width="1874" height="344" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139424" />
+    <state width="1874" height="344" key="GridCell.Tab.1.bottom" timestamp="1579244139425">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1874" height="344" key="GridCell.Tab.1.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139425" />
+    <state width="1874" height="344" key="GridCell.Tab.1.center" timestamp="1579244139424">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1874" height="344" key="GridCell.Tab.1.center/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139424" />
+    <state width="1874" height="344" key="GridCell.Tab.1.left" timestamp="1579244139424">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1874" height="344" key="GridCell.Tab.1.left/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139424" />
+    <state width="1874" height="344" key="GridCell.Tab.1.right" timestamp="1579244139424">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1874" height="344" key="GridCell.Tab.1.right/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139424" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/fabcar.go</url>
-          <line>272</line>
-          <option name="timeStamp" value="1" />
+          <line>265</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

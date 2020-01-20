@@ -21,18 +21,20 @@
         <!-- login-form starts -->
         <% include ../partials/buyPiform %>
         <!-- login for ends -->
+        <% include ../partials/dashboard.ejs %>
     </nav>
 
 
     <br>
 
-    <a href="#buyPi" data-target="buyPi"
+    <!-- <a href="#buyPi" data-target="buyPi"
         class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
         data-tooltip="Account" data-position="bottom">
         <% if (details.user) { %>
         <i class="large material-icons"> add_to_queue</i>
+        <%=details.user.name%>
         <% } %>
-    </a>
+    </a> -->
 
 
     <!-- Compiled and minified JavaScript -->

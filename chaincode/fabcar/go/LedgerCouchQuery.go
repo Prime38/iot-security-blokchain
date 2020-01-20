@@ -16,20 +16,20 @@ type QueryResponse struct {
 	Query  *jsonq.JsonQuery
 }
 
-func firstQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
-	resultsIterator, err := stub.GetQueryResult(queryString)
-	if err != nil {
-		return nil, err
-	}
-	defer closeIterator(resultsIterator)
-
-	if resultsIterator.HasNext() {
-		data, _ := resultsIterator.Next()
-		return data.Value, nil
-	}
-
-	return []byte(""), nil
-}
+//func firstQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
+//	resultsIterator, err := stub.GetQueryResult(queryString)
+//	if err != nil {
+//		return nil, err
+//	}
+//	defer closeIterator(resultsIterator)
+//
+//	if resultsIterator.HasNext() {
+//		data, _ := resultsIterator.Next()
+//		return data.Value, nil
+//	}
+//
+//	return []byte(""), nil
+//}
 func lastQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
 	resultsIterator, err := stub.GetQueryResult(queryString)
 	if err != nil {
@@ -51,28 +51,34 @@ func lastQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString 
 
 	return []byte(""), nil
 }
-//func allQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
-//	resultsIterator, err := stub.GetQueryResult(queryString)
-//	if err != nil {
-//		return nil, err
-//	}
-//	defer closeIterator(resultsIterator)
-//
-//	//x,_:=resultsIterator.Next()
-//
-//	for resultsIterator.HasNext() {
-//		x,_=resultsIterator.Next()
-//
-//
-//	}
-//
-//	if !resultsIterator.HasNext() {
-//		fmt.Println(x)
-//		return x.Value, nil
-//	}
-//
-//	return []byte(""), nil
-//}
+func allPiQueryValueForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
+	resultsIterator, err := stub.GetQueryResult(queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer closeIterator(resultsIterator)
+	arr:=[]Pi{}
+
+	x,_:=resultsIterator.Next()
+
+	for resultsIterator.HasNext() {
+		var piData Pi
+		_=json.Unmarshal(x.Value,&piData)
+		arr=append(arr,piData)
+		x,_=resultsIterator.Next()
+
+	}
+	var piData Pi
+	_=json.Unmarshal(x.Value,&piData)
+	arr=append(arr,piData)
+	fmt.Println("ALL array of pi ")
+	fmt.Println(arr)
+	resultArrjson,_:=json.Marshal(arr)
+	fmt.Println("Inside all Value for query String")
+	fmt.Println((resultArrjson))
+
+	return (resultArrjson), nil
+}
 
 func decodeSingleResponse(jsonResponse []byte) *QueryResponse {
 	data := map[string]interface{}{}

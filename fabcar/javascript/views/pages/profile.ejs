@@ -11,7 +11,16 @@
         <!-- main navbar starts -->
         <% include ../partials/nav %>
         <!-- main navbar ends -->
+        <!-- Sign-in form start -->
+        <% include ../partials/signinform %>
+        <!-- sign-in form ends -->
+        <!-- login-form starts -->
+        <% include ../partials/loginform %>
+        <!-- login for ends -->
+        <!-- login-form starts -->
+        <% include ../partials/buyPiform %>
     </nav>
+    
     <h1>Name : <%= details.user.name%></h1>
     <h5>
         Certificate :<%= details.user.certificate%>
@@ -21,6 +30,8 @@
     </h5>
 
     <% include ../partials/deviceList %>
+    <% include ../partials/transfer %>
+    <% include ../partials/scripts %>
 </body>
 
 </html>

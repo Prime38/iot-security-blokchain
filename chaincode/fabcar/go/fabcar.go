@@ -34,9 +34,9 @@ type User struct {
 type OwnerShip struct{
 	Doctype string
 	OwnerShipId string
-	UserId string
-	UserCertificate string
-	UserPublicKey string
+	OwnerId string
+	OwnerCertificate string
+	OwnerPublicKey string
 	PiId string
 	PiCertificate string
 	PiPublicKey string
@@ -52,6 +52,7 @@ type Pi struct {
 	Owner string
 	Cert string
 	PubKey string
+	Description string
 }
 
 type DataAccessList struct {
@@ -87,55 +88,132 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.register(APIstub, args)
 	}else if function == "login" {
 		return s.login(APIstub, args)
-	} else if function == "sensorData" {
+	} else if function == "getAllPi" {
+		return s.getAllPi(APIstub, args)
+	}else if function == "sensorData" {
 		return s.sensorData(APIstub, args)
 	} else if function == "lastData" {
 		return  s.lastData(APIstub)
 	} else if function == "regPi" {
 		return s.regPi(APIstub, args)
-	} else if function == "buyPi" {
-		return s.buyPi(APIstub, args)
+	} else if function == "transferOwnership" {
+		return s.transferOwnership(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
 }
+//helper Functions
+func getUser(APIstub shim.ChaincodeStubInterface,Userid string)User{
+	userQuery1:=newCouchQueryBuilder().addSelector("Doctype","User").addSelector("UserId",Userid).getQueryString()
+	user,_:=lastQueryValueForQueryString(APIstub,userQuery1)
 
+	var userData User
+	_=json.Unmarshal(user,&userData)
+	return userData
+}
+func getPi(APIstub shim.ChaincodeStubInterface,PiId string) Pi{
+	piQuery:=newCouchQueryBuilder().addSelector("Doctype","Pi").addSelector("PiId",PiId).getQueryString()
+	pi,_:=lastQueryValueForQueryString(APIstub,piQuery)
 
-//Unfinished Function
-func (s *SmartContract) buyPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
-	if len(args) != 7 {
-		return shim.Error("Incorrect number of arguments. Expecting 7")
-	}
-	userid:=args[0]
-	usercert:=args[1]
-	userpubkey:=args[2]
-
-	piId:=args[3]
-	piPass:=args[6]
-	//fetch pi
-	piQuery:=newCouchQueryBuilder().addSelector("Doctype","Pi").addSelector("PiId",piId).getQueryString()
-	pi,err:=lastQueryValueForQueryString(APIstub,piQuery)
-	if err!=nil{
-		fmt.Println("Pi NOT FOUND")
-		return shim.Error(err.Error())
-	}
 	var piData Pi
 	_=json.Unmarshal(pi,&piData)
-	if piData.Password!=piPass{
-		return shim.Error("Password Doesn't Match ")
+
+	return piData
+}
+
+func (s *SmartContract) getAllPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
+	piQuery:=newCouchQueryBuilder().addSelector("Doctype","Pi").getQueryString()
+	piData,_:=allPiQueryValueForQueryString(APIstub,piQuery)
+	fmt.Println("Inside getAllPi Function")
+	fmt.Println(piData)
+	return shim.Success(piData)
+}
+func getCert(APIstub shim.ChaincodeStubInterface,OwnerId ,PiId string)OwnerShip{
+	certQuery:=newCouchQueryBuilder().addSelector("Doctype","OwnerShip").addSelector("OwnerId",OwnerId).addSelector("PiId",PiId).getQueryString()
+	cert,err:=lastQueryValueForQueryString(APIstub,certQuery)
+	if err!=nil{
+		fmt.Println("certificate NOT FOUND")
+
 	}
-	fmt.Println("Pi FOUND")
+	var certData OwnerShip
+	_=json.Unmarshal(cert,&certData)
+	return certData
+}
+
+//transfer ownership
+func (s *SmartContract) transferOwnership( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
+	}
+	piId:=args[0]
+	ownerId:= args[1]
+	buyerId:=args[2]
+
+	//1. fetch pi
+
+	piData:=getPi(APIstub,piId)
 	//update pi
-	piData.Owner=userid
+	piData.Owner=buyerId
 	piDataAsBytes,_:=json.Marshal(piData)
 	APIstub.PutState(piId,piDataAsBytes)
+	fmt.Println("after update",piData)
 
+	//2. fetch owner
 
-	var data=OwnerShip{"Ownership",userid+"."+piId,userid,usercert,userpubkey,piId,piData.Cert,piData.PubKey}
-	fmt.Println(data)
-	ownershipAsBytes,_:=json.Marshal(data)
-	APIstub.PutState(userid+piId,ownershipAsBytes)
-	return shim.Success(ownershipAsBytes)
+	ownerData:=getUser(APIstub,ownerId)
+	fmt.Println("owner Data",ownerData)
+	//remove pi from owned devices
+	ownerData.OwnedDevices=ownerData.OwnedDevices[:len(ownerData.OwnedDevices)-1]// as now it contains only one
+	ownerAsbytes,_:=json.Marshal(ownerData)
+	APIstub.PutState(ownerData.UserId,ownerAsbytes)
+	fmt.Println("owner Data after update ",ownerData)
+
+	//3. fetch buyer
+	buyerData:=getUser(APIstub,buyerId)
+	fmt.Println("buyer Data",buyerData)
+	//add pi to owned devices
+	buyerData.OwnedDevices=append(buyerData.OwnedDevices,piId)
+	userAsbytes1,_:=json.Marshal(buyerData)
+	APIstub.PutState(buyerData.UserId,userAsbytes1)
+	fmt.Println("buyer Data after update",buyerData)
+
+	// 4.fetch ownership cert
+
+	certData:=getCert(APIstub,ownerId,piId)
+	fmt.Println("ownership certificate Data",certData)
+
+	//update
+	certData.OwnerId = buyerData.UserId
+	certData.OwnerCertificate = buyerData.Cert
+	certData.OwnerPublicKey = buyerData.PubKey
+	ownerShipAsBytes,_:=json.Marshal(certData)
+	APIstub.PutState(certData.OwnerShipId,ownerShipAsBytes)
+
+	fmt.Println("ownership certificate Data after update ",certData)
+
+	return shim.Success(ownerAsbytes)
+}
+
+//Data sharing
+func (s *SmartContract) shareData( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+	piId:=args[0]
+	sharedUserId:=args[1]
+
+	//fetch shared User
+
+	var userData User=getUser(APIstub,sharedUserId)
+
+	fmt.Println("buyer Data",userData)
+	//add pi to Accessed devices
+	userData.AccessedDevice=append(userData.AccessedDevice,piId)
+	userAsbytes,_:=json.Marshal(userData)
+	APIstub.PutState(userData.UserId,userAsbytes)
+	fmt.Println("shared user Data after update",userData)
+
+	return shim.Success(userAsbytes)
 }
 
 
@@ -152,26 +230,16 @@ func (s *SmartContract) regPi( APIstub shim.ChaincodeStubInterface, args []strin
 	owner:="Manufacturer"
 	cert:=args[6]
 	pubkey:=args[7]
-	var pi=Pi{"Pi",piId,ip,uname,pass,port,owner,cert,pubkey}
-	fmt.Println(pi)
+	var pi=Pi{"Pi",piId,ip,uname,pass,port,owner,cert,pubkey,"Get 24/7 update of Temperature and Humidity"}
 	piAsBytes,_:=json.Marshal(pi)
 	APIstub.PutState(piId,piAsBytes)
 
-
-	userQuery:=newCouchQueryBuilder().addSelector("Doctype","User").addSelector("UserId","Manufacturer").getQueryString()
-	user,err:=lastQueryValueForQueryString(APIstub,userQuery)
-	if err!=nil{
-		fmt.Println("USER NOT FOUND")
-		return shim.Error(err.Error())
-	}
-	var userData User
-	_=json.Unmarshal(user,&userData)
+	userData:=getUser(APIstub,"Manufacturer")
 	userData.OwnedDevices=append(userData.OwnedDevices,piId)
 	userAsbytes,_:=json.Marshal(userData)
 	APIstub.PutState(userData.UserId,userAsbytes)
 
-	var ownerShip=OwnerShip{"OwnerShip","Manufacturer."+piId,userData.UserId,userData.Cert,userData.PubKey,piId,cert,pubkey}
-	fmt.Println(ownerShip)
+	var ownerShip=OwnerShip{"OwnerShip",time.Now().String(),userData.UserId,userData.Cert,userData.PubKey,piId,cert,pubkey}
 	ownerShipAsBytes,_:=json.Marshal(ownerShip)
 	APIstub.PutState(ownerShip.OwnerShipId,ownerShipAsBytes)
 
@@ -202,19 +270,14 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
 	}
 	name:=args[0]
 	pass:=args[1]
-	userQuery:=newCouchQueryBuilder().addSelector("Doctype","User").addSelector("UserId",name).getQueryString()
-	user,err:=lastQueryValueForQueryString(APIstub,userQuery)
-	if err!=nil{
-		fmt.Println("USER NOT FOUND")
-		return shim.Error(err.Error())
-	}
-	var userData User
-	_=json.Unmarshal(user,&userData)
+
+	var userData User=getUser(APIstub,name)
 	if userData.Password!=pass{
 		return shim.Error("Password Doesn't Match ")
 	}
 	fmt.Println("USER FOUND")
-	return shim.Success([]byte(user))
+	userAsBytes,_:=json.Marshal(userData)
+	return shim.Success([]byte(userAsBytes))
 }
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	temp:="genesis"

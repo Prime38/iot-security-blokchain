@@ -2,6 +2,13 @@
 <script>
     $(document).ready(function () {
         M.AutoInit();
+
+        document.getElementById("homebtn").onclick = function () {
+            location.href = "/";
+        };
+        document.getElementById("profilebtn").onclick = function () {
+            location.href = "/profile";
+        };
         // $('.sidenav').sidenav();
 
         // $("#btn1").click(function () {
@@ -31,4 +38,8 @@
         // });
 
     });
+
+    // function myFunction(deviceId) {
+    //     console.log(deviceId);
+    // }
 </script>

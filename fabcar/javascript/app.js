@@ -61,17 +61,82 @@ app.set('view engine', 'ejs');
 
 // all get routes
 app.get('/', (req, res) => {
-    let details = req.signedCookies.details;
-    if (details) {
-        console.log('details found in home page');
-    } else {
-        details = {};
-        console.log('details created in home page', details);
+    async function main() {
+        try {
+
+            // Create a new file system based wallet for managing identities.
+            const walletPath = path.join(process.cwd(), 'wallet');
+            const wallet = new FileSystemWallet(walletPath);
+            console.log(`Wallet path: ${walletPath}`);
+
+            // Check to see if we've already enrolled the user.
+            const userExists = await wallet.exists('user1');
+            if (!userExists) {
+                console.log('An identity for the user "user1" does not exist in the wallet');
+                console.log('Run the registerUser.js application before retrying');
+                return;
+            }
+
+            // Create a new gateway for connecting to our peer node.
+            const gateway = new Gateway();
+            await gateway.connect(ccp, {
+                wallet,
+                identity: 'user1',
+                discovery: {
+                    enabled: false
+                }
+            });
+
+            // Get the network (channel) our contract is deployed to.
+            const network = await gateway.getNetwork('mychannel');
+
+            // Get the contract from the network.
+            const contract = network.getContract('fabcar');
+
+            // Submit the specified transaction.
+
+            const result = await contract.submitTransaction('getAllPi');
+            console.log('Transaction has been submitted');
+
+            let jsonResult = JSON.parse(result.toString())
+            // for (let index = 0; index < jsonResult.length; index++) {
+            //     const element = jsonResult[index];
+            //     delete element.Cert
+
+            // }
+
+
+            // console.log("List of all pi", jsonResult);
+            let details = req.signedCookies.details;
+            if (details) {
+                details['allDevices'] = jsonResult
+                console.log('details found in home page', details);
+            } else {
+                details = {
+                    allDevices: jsonResult
+                };
+                console.log('details created in home page', details);
+            }
+            res.cookie('details', details, cookieOptions);
+            res.render('pages/index', {
+                details: details
+            });
+
+            // Disconnect from the gateway.
+            await gateway.disconnect();
+
+        } catch (error) {
+            console.error(`Failed to submit transaction: ${error}`);
+            process.exit(1);
+        }
     }
-    res.cookie('details', details, cookieOptions);
-    res.render('pages/index', {
-        details: details
-    });
+
+    main();
+
+
+
+
+
 });
 app.get('/register', (req, res) => {
     // let details = req.body.details;
@@ -87,6 +152,7 @@ app.get('/login', (req, res) => {
     res.render('pages/index', {
         details: details
     });
+    // res.redirect('/')
 });
 
 app.get('/profile', (req, res) => {
@@ -110,7 +176,7 @@ app.get('/profile', (req, res) => {
     }
 });
 
-// all post routesregister
+// all post routes 
 app.post('/', (req, res) => {
 
 });
@@ -266,6 +332,73 @@ app.post('/register', (req, res) => {
     });
 })
 
+app.post('/transfer', (req, res) => {
+
+    console.log(req.body)
+    // generate a verification random code of 6 length and post it the pi server
+    //console.log( Math.floor(100000 + Math.random() * 900000)   );
+    // need to do a invoke tx now
+    async function transferOwnership(request) {
+        try {
+
+            // Create a new file system based wallet for managing identities.
+            const walletPath = path.join(process.cwd(), 'wallet');
+            const wallet = new FileSystemWallet(walletPath);
+            console.log(`Wallet path: ${walletPath}`);
+
+            // Check to see if we've already enrolled the user.
+            const userExists = await wallet.exists(request.ownerId);
+            if (!userExists) {
+                console.log('An identity for the user "user1" does not exist in the wallet');
+                console.log('Run the registerUser.js application before retrying');
+                return;
+            }
+
+            // Create a new gateway for connecting to our peer node.
+            const gateway = new Gateway();
+            await gateway.connect(ccp, {
+                wallet,
+                identity: request.ownerId,
+                discovery: {
+                    enabled: false
+                }
+            });
+
+            // Get the network (channel) our contract is deployed to.
+            const network = await gateway.getNetwork('mychannel');
+
+            // Get the contract from the network.
+            const contract = network.getContract('fabcar');
+
+            // Submit the specified transaction.
+
+            const result = await contract.submitTransaction('transferOwnership', request.deviceId, request.ownerId, request.buyerId);
+            console.log('Transaction has been submitted');
+            let jsonUser = JSON.parse(result.toString())
+            console.log("after ownership transfer ", jsonUser);
+
+
+            let details = req.signedCookies.details;
+            if (details) {
+                details.user = jsonUser;
+            } else {
+                details = {
+                    user: jsonUser
+                };
+            }
+            res.cookie('details', details, cookieOptions);
+            res.render('pages/profile', {
+                details: details
+            });
+
+        } catch (error) {
+            console.error(`Failed to submit transaction: ${error}`);
+            process.exit(1);
+        }
+
+    }
+    transferOwnership(req.body);
+});
 app.post('/login', upload.single('keyFile'), (req, res, next) => {
 
     let privBuf = req.file.buffer
@@ -359,11 +492,14 @@ app.post('/login', upload.single('keyFile'), (req, res, next) => {
     }).then((verified) => {
         let details = req.signedCookies.details;
         if (details) {
-            details.user = user;
+            details['user'] = user;
+            console.log('details found in login page', details);
+
         } else {
             details = {
                 user: user
             };
+            console.log('details created in login page', details);
         }
         res.cookie('details', details, cookieOptions);
         res.render('pages/profile', {
@@ -883,7 +1019,7 @@ function showIP() {
         });
     });
 
-} 
+}
 showIP()
 io.on('connection', function (socket) {
     console.log('a user connected');
