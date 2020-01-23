@@ -9,39 +9,23 @@
                     <img class="activator" src="/views/images/TemperatureSensing.jpg">
                 </div>
                 <div class="card-content">
-                    <span class="card-title activator grey-text text-darken-4 " style="font-size: medium;"><i class="material-icons right">more_vert</i>Device ID:
+                    <span class="card-title activator grey-text text-darken-4 " style="font-size: medium;"><i
+                            class="material-icons right">more_vert</i>Device ID:
                         <%= device.PiId %></span>
-                        <span class="card-title activator grey-text text-darken-4 " style="font-size: medium;">Owner:
-                            <%= device.Owner %></span>
+                    <span class="card-title activator grey-text text-darken-4 " style="font-size: medium;">Owner:
+                        <%= device.Owner %></span>
                     <p><%= device.Description %></p>
                 </div>
                 <div class="card-action">
                     <% if (details.user) {%>
                     <div class="row">
-                        <form class="col s6" action="/transfer" method="POST">
-                            <input type="hidden" id="ownerId" type="text" name="ownerId" value="<%= device.Owner %>">
-                            <input type="hidden" id="deviceId" type="text" name="deviceId" value="<%= device.PiId %>">
-                            <input type="hidden" id="buyerId" type="text" name="buyerId"
-                                value="<%= details.user.name %>">
-                            <div class="row center">
-                                <div class="input-field col s12">
-                                    <button class=" blue btn waves-effect waves-light" type="submit">Buy This Device
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                        <form class="col s6" action="/transfer" method="POST">
-                            <input type="hidden" id="ownerId" type="text" name="ownerId" value="<%= device.Owner %>">
-                            <input type="hidden" id="deviceId" type="text" name="deviceId" value="<%= device.PiId %>">
-                            <input type="hidden" id="buyerId" type="text" name="buyerId"
-                                value="<%= details.user.name %>">
-                            <div class="row center">
-                                <div class="input-field col s12">
-                                    <button class=" blue btn waves-effect waves-light" type="submit">Get Data
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        <% if (details.user.name!==device.Owner){%>
+                        <button class=" col6 s12 blue btn waves-effect waves-light" onClick="buyDeviceNotify('<%= details.user.name%>','<%= device.Owner%>','<%= device.PiId%>')">Buy This Device
+                        </button>
+                        <% } %>
+                        <button class="col6 s12 blue btn waves-effect waves-light" onClick="getDataNotify('<%= details.user.name%>','<%= device.Owner%>','<%= device.PiId%>')">Get Data
+                        </button>
+
                     </div>
                     <%} else{%>
                     <p>Login To Buy or get data of a device</p>
@@ -60,3 +44,4 @@
     </div>
 </div>
 <% } %>
+

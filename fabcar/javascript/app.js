@@ -35,6 +35,30 @@ var piID = null
 // });
 var upload = multer()
 
+// Firebase App (the core Firebase SDK) is always required and
+// must be listed before other Firebase SDKs
+var firebase = require("firebase/app");
+
+// Add the Firebase products that you want to use
+require("firebase/auth");
+require("firebase/firestore");
+require("firebase/database");
+
+// TODO: Replace the following with your app's Firebase project configuration
+var firebaseConfig = {
+    apiKey: "AIzaSyAond5Qk3u5eTzw5Xv6YClXeO4h-WgdD3o",
+    authDomain: "betabase-8e34f.firebaseapp.com",
+    databaseURL: "https://betabase-8e34f.firebaseio.com",
+    projectId: "betabase-8e34f",
+    storageBucket: "betabase-8e34f.appspot.com",
+    messagingSenderId: "954186561935",
+    appId: "1:954186561935:web:a690142f5d0266238173fa",
+    measurementId: "G-XV126SJZSK"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
 // define what app will use ;
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
@@ -53,13 +77,10 @@ app.use(cookieParser('prime'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// initialize pidata;
-// let temp=null,
-//     humidity=null,
-//     piID=null;
 
 
 // all get routes
+
 app.get('/', (req, res) => {
     async function main() {
         try {
@@ -94,21 +115,24 @@ app.get('/', (req, res) => {
             const contract = network.getContract('fabcar');
 
             // Submit the specified transaction.
+            // console.log(contract);
+
 
             const result = await contract.submitTransaction('getAllPi');
             console.log('Transaction has been submitted');
 
             let jsonResult = JSON.parse(result.toString())
-            // for (let index = 0; index < jsonResult.length; index++) {
-            //     const element = jsonResult[index];
-            //     delete element.Cert
+            for (let index = 0; index < jsonResult.length; index++) {
+                const element = jsonResult[index];
+                delete element.Cert
 
-            // }
+            }
 
 
-            // console.log("List of all pi", jsonResult);
+
             let details = req.signedCookies.details;
             if (details) {
+                console.log('details.user found in home page', details.user);
                 details['allDevices'] = jsonResult
                 console.log('details found in home page', details);
             } else {
@@ -117,6 +141,10 @@ app.get('/', (req, res) => {
                 };
                 console.log('details created in home page', details);
             }
+            // if (details.user) {
+            //     getNotifications(details.user.name,req,res)
+            // }
+
             res.cookie('details', details, cookieOptions);
             res.render('pages/index', {
                 details: details
@@ -132,11 +160,6 @@ app.get('/', (req, res) => {
     }
 
     main();
-
-
-
-
-
 });
 app.get('/register', (req, res) => {
     // let details = req.body.details;
@@ -154,7 +177,20 @@ app.get('/login', (req, res) => {
     });
     // res.redirect('/')
 });
+app.get('/logout', (req, res) => {
+    let details = req.signedCookies.details;
+    if (details.user) {
+        details['user'] = null;
+        console.log('details found in LOGOUT page', details);
 
+    }
+    res.cookie('details', details, cookieOptions);
+    res.redirect('/')
+    // res.render('pages/index', {
+    //     details: details
+    // });
+
+});
 app.get('/profile', (req, res) => {
     let details = req.body.details;
     let devices = [{
@@ -177,15 +213,13 @@ app.get('/profile', (req, res) => {
 });
 
 // all post routes 
-app.post('/', (req, res) => {
-
-});
 
 
 let mspId = "Org1MSP"
 let affiliation = "org1.department1"
 
 // Registration is complete 
+
 app.post('/register', (req, res) => {
     var user = {
         name: req.body.name,
@@ -310,8 +344,9 @@ app.post('/register', (req, res) => {
         return buf.toString()
     }).then((pubKey) => {
         user.publicKey = pubKey
+
         console.log('user having cerificate and public key : ', user);
-        let details = req.signedCookies.details;
+        var details = req.signedCookies.details;
         if (details) {
             details.user = user;
         } else {
@@ -319,6 +354,8 @@ app.post('/register', (req, res) => {
                 user: user
             };
         }
+        console.log(details.user);
+
         res.cookie('details', details, cookieOptions);
         res.render('pages/profile', {
             details: details
@@ -399,8 +436,10 @@ app.post('/transfer', (req, res) => {
     }
     transferOwnership(req.body);
 });
+app.post('/accessData',(req,res)=>{
+    
+})
 app.post('/login', upload.single('keyFile'), (req, res, next) => {
-
     let privBuf = req.file.buffer
     let user = {
         msg: req.body,
@@ -491,25 +530,51 @@ app.post('/login', upload.single('keyFile'), (req, res, next) => {
         return verifySign(user)
     }).then((verified) => {
         let details = req.signedCookies.details;
+        delete user.privateKey
+        delete user.certificate
         if (details) {
             details['user'] = user;
             console.log('details found in login page', details);
-
         } else {
             details = {
                 user: user
             };
             console.log('details created in login page', details);
         }
-        res.cookie('details', details, cookieOptions);
-        res.render('pages/profile', {
-            details: details
-        });
+
+        //firebase database
+        let dbRefObject = firebase.database().ref().child('notifications').child(details.user.name).orderByKey()
+
+        dbRefObject.once('value', (snap) => {
+            let notifications = []
+            snap.forEach((childSnap) => {
+                console.log(childSnap.val());
+                notifications.push(childSnap.val())
+            })
+            let s = new Set(notifications)
+            console.log(s);
+            if(notifications.length!=0){
+                details.user.notifications = notifications
+            } else{
+                details.user.notifications = []
+            }
+            
+
+            console.log("details inside firebase on value login page", details);
+            console.log('-------------------');
+
+            console.log("details in login page", details);
+            res.cookie('details', details, cookieOptions);
+            // render page
+            res.render('pages/profile', {
+                details: details,
+                notifications: notifications
+            });
+        })
 
     }).catch((err) => {
         console.log(err)
     })
-
 
 });
 
@@ -660,64 +725,8 @@ app.post('/regPi', (req, res) => {
 })
 
 app.post('/buyPi', (req, res) => {
-    console.log(req.body);
-    // let details = req.body.details;
-    //form pi object
-    let pi = req.body;
-    // do a invoke transaction
-    // console.log(details.user)
-    async function main(pi) {
-        try {
-
-            // Create a new file system based wallet for managing identities.
-            const walletPath = path.join(process.cwd(), 'wallet');
-            const wallet = new FileSystemWallet(walletPath);
-            console.log(`Wallet path: ${walletPath}`);
-
-            // Check to see if we've already enrolled the user.
-            const userExists = await wallet.exists('user1');
-            if (!userExists) {
-                console.log('An identity for the user "user1" does not exist in the wallet');
-
-                return;
-            }
-
-            // Create a new gateway for connecting to our peer node.
-            const gateway = new Gateway();
-            await gateway.connect(ccp, {
-                wallet,
-                identity: 'user1',
-                discovery: {
-                    enabled: false
-                }
-            });
-
-            // Get the network (channel) our contract is deployed to.
-            const network = await gateway.getNetwork('mychannel');
-
-            // Get the contract from the network.
-            const contract = network.getContract('fabcar');
-
-
-            let userid = 'user1'
-            var piId = '4cf527c583e4404648be5975329b18fc90b98bca3eb699dc26390725ac1a7fba'
-            let piIp = '10.100.32.142'
-            var piPass = '41414141'
-            var usercert = '-----BEGIN CERTIFICATE-----MIICkjCCAjmgAwIBAgIUXw7NYSyYh0XMrkT5oUnFrt0OzDgwCgYIKoZIzj0EAwIwczELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xGTAXBgNVBAoTEG9yZzEuZXhhbXBsZS5jb20xHDAaBgNVBAMTE2NhLm9yZzEuZXhhbXBsZS5jb20wHhcNMTkxMDI1MTIzNDAwWhcNMjAxMDI0MTIzOTAwWjBEMTAwDQYDVQQLEwZjbGllbnQwCwYDVQQLEwRvcmcxMBIGA1UECxMLZGVwYXJ0bWVudDExEDAOBgNVBAMTB3Nob3VtaWswWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQfFKLxJ5fu5/I68lw4cmwIz5xtgMnMDzGBqJQqEpmmW3dONaTwxfIcMJLBumnuYVeFu0IKZS97VeFShLLYo/IFo4HZMIHWMA4GA1UdDwEB/wQEAwIHgDAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQg6RvsVtcHGt7oGGv+HBPz2VphRjArBgNVHSMEJDAigCBCOaoNzXba7ri6DNpwGFHRRQTTGq0bLd3brGpXNl5JfDBqBggqAwQFBgcIAQReeyJhdHRycyI6eyJoZi5BZmZpbGlhdGlvbiI6Im9yZzEuZGVwYXJ0bWVudDEiLCJoZi5FbnJvbGxtZW50SUQiOiJzaG91bWlrIiwiaGYuVHlwZSI6ImNsaWVudCJ9fTAKBggqhkjOPQQDAgNHADBEAiA0CcBZZFCiLzLnxWQnFDOWhJZPUbVL/wqXQN8+J0k8RQIgH/0/eAyVcw2Ov67J+nHr74kEvoaOEHJhIT08ngzKb/g=-----END CERTIFICATE-----'
-            var userpubKey = '-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHxSi8SeX7ufyOvJcOHJsCM+cbYDJzA8xgaiUKhKZplt3TjWk8MXyHDCSwbpp7mFXhbtCCmUve1XhUoSy2KPyBQ==-----END PUBLIC KEY-----'
-
-            await contract.submitTransaction('buyPi', userid, usercert, userpubKey, piId, piIp, pi.piUserName, piPass);
-            console.log('Transaction has been submitted');
-            res.send('ownership confiremed')
-            // Disconnect from the gateway.
-            await gateway.disconnect();
-
-        } catch (error) {
-            console.error(`Failed to submit transaction: ${error}`);
-            process.exit(1);
-        }
-    }
-    main(pi)
+    let postBuyPi = require('./postBuyPi')
+    postBuyPi.buyPi(req, res)
 })
 
 app.get('/sendData', (req, res) => {
@@ -799,9 +808,7 @@ app.post('/sendData', (req, res) => {
             chainId: 'mychannel',
             txId: tx_id
         };
-        console.log("request");
-        console.log("--------------------");
-        console.log(request);
+
 
 
 
@@ -814,6 +821,7 @@ app.post('/sendData', (req, res) => {
         if (proposalResponses && proposalResponses[0].response &&
             proposalResponses[0].response.status === 200) {
             isProposalGood = true;
+            
             console.log('Transaction proposal was good');
         } else {
             console.error('Transaction proposal was bad');
@@ -1036,3 +1044,7 @@ server.listen(port, err => {
     }
 
 });
+
+function getNotifications(name, req, res) {
+
+}

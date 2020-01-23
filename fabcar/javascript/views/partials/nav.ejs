@@ -1,8 +1,8 @@
 <div class="nav-wrapper blue z-depth-3">
   <ul id="nav-mobile" class="left">
     <li></li><a id="homebtn"
-      class=" z-depth-1 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped" data-tooltip="HOME"
-      data-position="bottom">
+      class=" z-depth-1 light-blue btn-floating btn-large  waves-effect waves-light modal-trigger tooltipped"
+      data-tooltip="HOME" data-position="bottom" onclick="homebtn()">
       <i class="large material-icons"> home</i>
     </a></li>
 
@@ -12,29 +12,40 @@
     <% if (!details.user) { %>
 
     <li><a href="#login" data-target="login"
-        class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
+        class=" z-depth-1 light-blue btn-floating btn-large waves-effect waves-light modal-trigger tooltipped"
         data-tooltip="Login" data-position="bottom">
 
-        <i class="large material-icons"> account_circle</i>
+        <i class="large material-icons"> account_box</i>
       </a></li>
     <% } %>
 
     <% if (details.user) { %>
-    <li><a id="profilebtn" 
-        class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
-        data-tooltip="Profile" data-position="bottom">
+    <li><a id="profilebtn" class=" z-depth-1 blue btn-flat  waves-effect waves-light modal-trigger tooltipped"
+        data-tooltip="Profile" data-position="bottom" style="color: white;">
         <%=details.user.name%>
-        <% include ../partials/notifications %>
-      </a></li>
-    <li><a href="#login" data-target="login"
-        class=" z-depth-5 light-blue btn btn-large waves-effect waves-light modal-trigger tooltipped"
-        data-tooltip="Logout" data-position="bottom">
-        <i class="large material-icons"> account_circle</i>
-      </a></li>
 
-    <% } %>
+      </a></li>
+    <li>
+      <a onclick="getNotifications('<%= details.user.name %>')"
+        class='light-blue dropdown-trigger btn-large btn-floating btn-flat' data-target='notifications'><i
+          class=" circle material-icons">notifications</i></a>
+      
+    </li>
+    
     
 
+
+    <li><a id="logoutbtn" class=" z-depth-1 red btn-floating btn-large waves-effect waves-light tooltipped"
+        data-tooltip="Logout" data-position="bottom" onclick="logoutbtn()">
+        <i class="large material-icons"> account_box</i>
+      </a></li>
+
+
+    <% } %>
+
+
   </ul>
-  
+  <!-- Dropdown Structure -->
+  <% include ../partials/notifications %>
+
 </div>

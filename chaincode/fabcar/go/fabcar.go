@@ -163,7 +163,15 @@ func (s *SmartContract) transferOwnership( APIstub shim.ChaincodeStubInterface, 
 	ownerData:=getUser(APIstub,ownerId)
 	fmt.Println("owner Data",ownerData)
 	//remove pi from owned devices
-	ownerData.OwnedDevices=ownerData.OwnedDevices[:len(ownerData.OwnedDevices)-1]// as now it contains only one
+
+	temp:=ownerData.OwnedDevices
+	ownerData.OwnedDevices=[]string{}
+	for i:=0;i<len(temp);i++{
+		if temp[i]!=piId{
+			ownerData.OwnedDevices=append(ownerData.OwnedDevices,temp[i])
+		}
+	}
+
 	ownerAsbytes,_:=json.Marshal(ownerData)
 	APIstub.PutState(ownerData.UserId,ownerAsbytes)
 	fmt.Println("owner Data after update ",ownerData)
