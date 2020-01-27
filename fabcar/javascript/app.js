@@ -436,8 +436,72 @@ app.post('/transfer', (req, res) => {
     }
     transferOwnership(req.body);
 });
-app.post('/accessData',(req,res)=>{
-    
+app.post('/accessData', (req, res) => {
+    console.log(req.body)
+    // generate a verification random code of 6 length and post it the pi server
+    //console.log( Math.floor(100000 + Math.random() * 900000)   );
+    // need to do a invoke tx now
+    async function accessData(request) {
+        try {
+
+            // Create a new file system based wallet for managing identities.
+            const walletPath = path.join(process.cwd(), 'wallet');
+            const wallet = new FileSystemWallet(walletPath);
+            console.log(`Wallet path: ${walletPath}`);
+
+            // Check to see if we've already enrolled the user.
+            const userExists = await wallet.exists(request.ownerId);
+            if (!userExists) {
+                console.log('An identity for the user "user1" does not exist in the wallet');
+                console.log('Run the registerUser.js application before retrying');
+                return;
+            }
+
+            // Create a new gateway for connecting to our peer node.
+            const gateway = new Gateway();
+            await gateway.connect(ccp, {
+                wallet,
+                identity: request.ownerId,
+                discovery: {
+                    enabled: false
+                }
+            });
+
+            // Get the network (channel) our contract is deployed to.
+            const network = await gateway.getNetwork('mychannel');
+
+            // Get the contract from the network.
+            const contract = network.getContract('fabcar');
+
+            // Submit the specified transaction.
+
+            const result = await contract.submitTransaction('shareData', request.deviceId, request.ownerId, request.buyerId);
+            console.log('Transaction has been submitted');
+            let jsonUser = JSON.parse(result.toString())
+            console.log("after ownership transfer ", jsonUser);
+
+
+            let details = req.signedCookies.details;
+            if (details) {
+                details.user = jsonUser;
+            } else {
+                details = {
+                    user: jsonUser
+                };
+            }
+            res.cookie('details', details, cookieOptions);
+            res.render('pages/profile', {
+                details: details
+            });
+
+        } catch (error) {
+            console.error(`Failed to submit transaction: ${error}`);
+            process.exit(1);
+        }
+
+    }
+    accessData(req.body);
+
 })
 app.post('/login', upload.single('keyFile'), (req, res, next) => {
     let privBuf = req.file.buffer
@@ -550,15 +614,15 @@ app.post('/login', upload.single('keyFile'), (req, res, next) => {
             snap.forEach((childSnap) => {
                 console.log(childSnap.val());
                 notifications.push(childSnap.val())
+                notifications[notifications.length - 1].key = childSnap.key;
             })
-            let s = new Set(notifications)
-            console.log(s);
-            if(notifications.length!=0){
+            console.log(notifications);
+            if (notifications.length != 0) {
                 details.user.notifications = notifications
-            } else{
+            } else {
                 details.user.notifications = []
             }
-            
+
 
             console.log("details inside firebase on value login page", details);
             console.log('-------------------');
@@ -728,6 +792,81 @@ app.post('/buyPi', (req, res) => {
     let postBuyPi = require('./postBuyPi')
     postBuyPi.buyPi(req, res)
 })
+app.post('/terminal', (req, res) => {
+    var cmd = req.body.cmd
+    var ip = req.body.ipAd
+    var piId = req.body.piIdTerminal
+    var serverIp = showIp()
+
+    async function main() {
+        try {
+
+            // Create a new file system based wallet for managing identities.
+            const walletPath = path.join(process.cwd(), 'wallet');
+            const wallet = new FileSystemWallet(walletPath);
+            console.log(`Wallet path: ${walletPath}`);
+
+            // Check to see if we've already enrolled the user.
+            const userExists = await wallet.exists('user1');
+            if (!userExists) {
+                console.log('An identity for the user "user1" does not exist in the wallet');
+                console.log('Run the registerUser.js application before retrying');
+                return;
+            }
+
+            // Create a new gateway for connecting to our peer node.
+            const gateway = new Gateway();
+            await gateway.connect(ccp, {
+                wallet,
+                identity: 'user1',
+                discovery: {
+                    enabled: false
+                }
+            });
+
+            // Get the network (channel) our contract is deployed to.
+            const network = await gateway.getNetwork('mychannel');
+
+            // Get the contract from the network.
+            const contract = network.getContract('fabcar');
+
+            // Submit the specified transaction.
+
+            const result = await contract.submitTransaction('getPiById', req.body.piIdTerminal);
+            console.log('Transaction has been submitted');
+            let jsonPi = JSON.parse(result.toString())
+            console.log("PI found: ", jsonPi);
+            var details = req.signedCookies.details
+            if (jsonPi.Owner == details.user.name) {
+                request({
+                    uri: "http://" + jsonPi.Ip + ':3030/terminal',
+                    method: "POST",
+                    form: {
+                        cmd: cmd,
+                        from: serverIp
+                    }
+                }, function (error, response, body) {
+
+                    console.log(body);
+                });
+                res.render('pages/profile',{details:details})
+            }
+
+            // Disconnect from the gateway.
+            await gateway.disconnect();
+
+        } catch (error) {
+            console.error(`Failed to submit transaction: ${error}`);
+            process.exit(1);
+        }
+    }
+
+    main();
+
+
+
+
+})
 
 app.get('/sendData', (req, res) => {
     let details = req.signedCookies.details;
@@ -821,7 +960,7 @@ app.post('/sendData', (req, res) => {
         if (proposalResponses && proposalResponses[0].response &&
             proposalResponses[0].response.status === 200) {
             isProposalGood = true;
-            
+
             console.log('Transaction proposal was good');
         } else {
             console.error('Transaction proposal was bad');
@@ -906,7 +1045,7 @@ app.post('/sendData', (req, res) => {
 
         if (results && results[1] && results[1].event_status === 'VALID') {
             console.log('Successfully committed the change to the ledger by the peer');
-            res.render('pages/data');
+            // res.render('pages/data');
             latestData();
             //console.log("Response is ", JSON.stringify(results));
         } else {
@@ -1003,32 +1142,37 @@ function latestData() {
     });
 }
 
-function showIP() {
+function showIp(params) {
     var os = require('os');
     var ifaces = os.networkInterfaces();
-
+    let ip = ""
     Object.keys(ifaces).forEach(function (ifname) {
         var alias = 0;
 
         ifaces[ifname].forEach(function (iface) {
+
             if ('IPv4' !== iface.family || iface.internal !== false) {
                 // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
                 return;
             }
+            if (alias >= 1) {} else {
+                if (ip) {
 
-            if (alias >= 1) {
-                // this single interface has multiple ipv4 addresses
-                console.log(ifname + ':' + alias, iface.address);
-            } else {
-                // this interface has only one ipv4 adress
-                console.log(ifname, iface.address);
+                } else {
+                    ip = iface.address + ""
+                }
+
+                console.log(ip);
+
             }
-            ++alias;
         });
     });
 
+    return ip
 }
-showIP()
+
+console.log(showIp());
+
 io.on('connection', function (socket) {
     console.log('a user connected');
     socket.on('disconnect', function () {

@@ -1,0 +1,31 @@
+<div id="terminal" class="modal">
+    <div class="modal-content">
+        <div class='center'>
+            <h5 class="btn blue btn-large disabled waves-effect waves-light">Terminal</h5>
+        </div>
+        <div class="row">
+            <form class="col s12" action="/terminal" method="POST" >
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="piIdTerminal" type="hidden" name="piIdTerminal">
+                        
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="input-field col s12">
+                        <input id="cmd" type="text" name="cmd">
+                        <label for="cmd">Command</label>
+                    </div>
+                </div>
+                
+                <div class="row right-align">
+                    <div class="input-field col s12">
+                        <button class=" blue btn waves-effect waves-light" type="submit">Execute
+                            <i class="material-icons right"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

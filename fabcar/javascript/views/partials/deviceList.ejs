@@ -2,32 +2,90 @@
 <% if (details.user.OwnedDevices.length > 0){%>
 <div class="container blue" id="main-content">
     <div class="row ">
-        <ul class="collection with-header">
-            <li class="collection-header">
-                <h4>Your Devices</h4>
-            </li>
-            <% for (var i = 0; i < details.user.OwnedDevices.length; i++) { %>
-            <li class="collection-item">
-                <div class="right"><%= details.user.OwnedDevices[i]%>
-
-                    <a id="myButton" class=" z-depth-5 light-blue btn btn-large waves-effect waves-light tooltipped"
-                        data-tooltip="SeeData" data-position="bottom"><i class="material-icons">assessment</i></a>
-                    <a id="transferbtn" href="#transfer" data-target="transfer"
-                        class="modal-trigger  z-depth-5 light-blue btn btn-large waves-effect waves-light"><i
-                            class="material-icons">transfer_within_a_station</i></a>
-                    <script type="text/javascript">
-                        document.getElementById("myButton").onclick = function () {
-                            location.href = "/sendData";
-                        };
-
-                    </script>
+        <h2 class="center" style="color: white;">Your Devices</h2>
+        <% details.user.OwnedDevices.forEach(function(device){%>
+        <div class="col s12 m6">
+            <div class="card blue lighten-2">
+                <div class="card-image  waves-effect waves-block waves-light">
+                    <img class="activator" src="/views/images/TemperatureSensing.jpg">
                 </div>
-            </li>
-            <% } %>
+                <div class="card-content">
+                    <div class="row">
+                        <p class="card-title activator grey-text text-darken-4 " style="font-size: medium;"><i
+                                class="material-icons right">more_vert</i>Device ID:
+                            <%= device %></p>
 
-        </ul>
+                    </div>
+
+                </div>
+                <div class="card-action">
+                    <% if (details.user) {%>
+                    <div class="row">
+                        <button id="myButton"
+                            class="col6 s12 z-depth-5 light-blue btn btn-large waves-effect waves-light tooltipped"
+                            onclick="goToSendData()" data-tooltip="SeeData" data-position="bottom"><i
+                                class="material-icons">assessment</i></button>
+                        <button id="terminalBtn" onclick="getPiId('<%= device %>')"
+                            class="col6 s12 z-depth-5 light-blue btn btn-large waves-effect waves-light tooltipped modal-trigger"
+                            data-tooltip="Access Terminal" data-position="bottom"
+                            data-target="terminal">terminal</button>
+                    </div>
+                    <%} %>
+                </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4" style="font-size: medium;"><%= device.PiId %><i
+                            class="material-icons right">close</i></span>
+                    <p style="color: black;"><%= device.Description %></p>
+                </div>
+            </div>
+        </div>
+        <% }); %>
     </div>
 </div>
 <%}%>
 <% } %>
 
+
+<% if (details.user.AccessedDevice) { %>
+<% if (details.user.AccessedDevice.length > 0){%>
+<div class="container blue" id="main-content">
+    <div class="row ">
+        <h2 class="center" style="color: white;">Devices You can access data</h2>
+        <% details.user.AccessedDevice.forEach(function(device){%>
+        <div class="col s12 m6">
+            <div class="card blue lighten-2">
+                <div class="card-image  waves-effect waves-block waves-light">
+                    <img class="activator" src="/views/images/TemperatureSensing.jpg">
+                </div>
+                <div class="card-content">
+                    <div>
+                        <span class="card-title activator grey-text text-darken-4 " style="font-size: medium;"><i
+                                class="material-icons right">more_vert</i>Device ID:
+                            <%= device %></span>
+
+                    </div>
+
+                </div>
+                <div class="card-action">
+                    <% if (details.user) {%>
+                    <div class="row">
+                        <button id="myButton"
+                            class="col6 s12 z-depth-5 light-blue btn btn-large waves-effect waves-light tooltipped"
+                            onclick="goToSendData()" data-tooltip="SeeData" data-position="bottom"><i
+                                class="material-icons">assessment</i></button>
+                    </div>
+                    <%} %>
+                </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4" style="font-size: medium;"><%= device.PiId %><i
+                            class="material-icons right">close</i></span>
+                    <p style="color: black;"><%= device.Description %></p>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+</div>
+<%}%>
+    <% } %>
+<% include ../partials/terminal.ejs %>

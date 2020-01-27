@@ -7,20 +7,21 @@
             var name=""
     %>
 <ul id='notifications' class='dropdown-content blue lighten-2' style="width: 100px !important">
-    <% for(let i=0;i<details.user.notifications.length;i++){
+    <% for(let i=details.user.notifications.length-1;i>=0;i--){
         let notif=details.user.notifications[i] %>
         <% if(notif.task=== "buyDevice"){ %>
     <li data-target="buyFormModal" class="light-blue modal-trigger"
-        onclick="buyPi('<%= notif.deviceId %>','<%= details.user.name %>','<%= notif.user %>')">
+        onclick="buyPi('<%= notif.deviceId %>','<%= details.user.name %>','<%= notif.user %>','<%= notif.key %>')">
         <% deviceId=notif.deviceId %>
         <b><%=  notif.user %></b> wants to <b><%= notif.task %></b> of  <b><%= notif.deviceId%></b>
     </li>
     <%} else if(notif.task=== "getData"){%>
         <li data-target="getDataModal" class="light-blue modal-trigger"
-        onclick="getData('<%= notif.deviceId %>','<%= details.user.name %>','<%= notif.user %>')">
+        onclick="getData('<%= notif.deviceId %>','<%= details.user.name %>','<%= notif.user %>','<%= notif.key %>')">
         <% deviceId=notif.deviceId %>
-        <b><%=  notif.user %></b> wants to <b><%= notif.task %></b> of  <b><%= notif.deviceId%></b>
+        <b><%=  notif.user %></b> wants to <b><%= notif.task %></b> of  <b><%= notif.deviceId%></b> 
     </li>
+    
 
     <% } }%>
 
@@ -35,6 +36,7 @@
             <form id="buyPiForm" class="col s12" action="/transfer" method="POST">
                 <input id="buyPiFormDeviceId" type="text" name="deviceId">
                 <input id="buyPiFormOwnerId" type="hidden" name="ownerId">
+                <input id="buyPiFormKey" type="text" >
                 <div class='center'>
                     <h5 class="btn blue btn-large disabled waves-effect waves-light">TO
                     </h5>
@@ -44,11 +46,11 @@
 
                 <div class="row ">
                     <div class="input-field col s12 m6">
-                        <button class="center blue btn waves-effect waves-light" type="submit">Yes
+                        <button class="center blue btn waves-effect waves-light" type="submit" onclick="deleteBuyPiNotification('<%= details.user.name %>')">Yes
                         </button>
                     </div>
                     <div class="center input-field col s12 m6">
-                        <button class=" blue btn waves-effect waves-light">No
+                        <button class=" blue btn waves-effect waves-light" onclick="deleteBuyPiNotification('<%= details.user.name %>')">No
                         </button>
                     </div>
                 </div>
@@ -64,23 +66,22 @@
             </h5>
         </div>
         <div class="row">
-            <form id="getDataForm" class="col s12" action="/transfer" method="POST">
+            <form id="getDataForm" class="col s12" action="/accessData" method="POST">
                 <input id="getDataFormDeviceId" type="text" name="deviceId">
                 <input id="getDataFormOwnerId" type="hidden" name="ownerId">
+                <input id="getDataFormKey" type="text" >
                 <div class='center'>
                     <h5 class="btn blue btn-large disabled waves-effect waves-light">TO
                     </h5>
                 </div>
                 <input id="getDataFormBuyerId" type="text" name="buyerId">
-
-
                 <div class="row ">
                     <div class="input-field col s12 m6">
-                        <button class="center blue btn waves-effect waves-light" type="submit">Yes
+                        <button class="center blue btn waves-effect waves-light" type="submit" onclick="deleteGetDataNotification('<%= details.user.name %>')">Yes
                         </button>
                     </div>
                     <div class="center input-field col s12 m6">
-                        <button class=" blue btn waves-effect waves-light">No
+                        <button class=" blue btn waves-effect waves-light" onclick="deleteGetDataNotification('<%= details.user.name %>')">No
                         </button>
                     </div>
                 </div>

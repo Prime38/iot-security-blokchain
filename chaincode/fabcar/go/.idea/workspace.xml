@@ -5754,6 +5754,9 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.dep.integrator" value="true" />
@@ -5768,6 +5771,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
   </component>
   <component name="RunManager">
     <configuration name="go build Thesis1.4.1/chaincode/fabcar/go" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
@@ -5813,22 +5817,22 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="1118" y="311" width="424" height="480" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1576030442321" />
-    <state width="904" height="257" key="GridCell.Tab.0.bottom" timestamp="1579636115155">
+    <state width="904" height="258" key="GridCell.Tab.0.bottom" timestamp="1579743978780">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="904" height="257" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1579636115155" />
-    <state width="904" height="257" key="GridCell.Tab.0.center" timestamp="1579636115154">
+    <state width="904" height="258" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1579743978780" />
+    <state width="904" height="258" key="GridCell.Tab.0.center" timestamp="1579743978779">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="904" height="257" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1579636115154" />
-    <state width="904" height="257" key="GridCell.Tab.0.left" timestamp="1579636115153">
+    <state width="904" height="258" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1579743978779" />
+    <state width="904" height="258" key="GridCell.Tab.0.left" timestamp="1579743978779">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="904" height="257" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1579636115153" />
-    <state width="904" height="257" key="GridCell.Tab.0.right" timestamp="1579636115154">
+    <state width="904" height="258" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1579743978779" />
+    <state width="904" height="258" key="GridCell.Tab.0.right" timestamp="1579743978780">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="904" height="257" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1579636115154" />
+    <state width="904" height="258" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1579743978780" />
     <state width="1874" height="344" key="GridCell.Tab.1.bottom" timestamp="1579244139425">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
@@ -5845,5 +5849,9 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state width="1874" height="344" key="GridCell.Tab.1.right/0.27.1920.1053@0.27.1920.1053" timestamp="1579244139424" />
+    <state x="449" y="188" key="SettingsEditor" timestamp="1579766527669">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="449" y="188" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1579766527669" />
   </component>
 </project>

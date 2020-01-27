@@ -98,6 +98,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.regPi(APIstub, args)
 	} else if function == "transferOwnership" {
 		return s.transferOwnership(APIstub, args)
+	} else if function == "shareData" {
+		return s.shareData(APIstub, args)
+	} else if function == "getPiById" {
+		return s.getPiById(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
@@ -119,6 +123,11 @@ func getPi(APIstub shim.ChaincodeStubInterface,PiId string) Pi{
 	_=json.Unmarshal(pi,&piData)
 
 	return piData
+}
+func (s *SmartContract) getPiById( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
+	piData:=getPi(APIstub,args[0])
+	piDataAsBytes,_:=json.Marshal(piData)
+	return shim.Success(piDataAsBytes)
 }
 
 func (s *SmartContract) getAllPi( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
@@ -204,24 +213,43 @@ func (s *SmartContract) transferOwnership( APIstub shim.ChaincodeStubInterface, 
 
 //Data sharing
 func (s *SmartContract) shareData( APIstub shim.ChaincodeStubInterface, args []string ) sc.Response{
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 	piId:=args[0]
-	sharedUserId:=args[1]
+	ownerId:=args[1]
+	sharedUserId:=args[2]
 
-	//fetch shared User
+	//fetch Owner User
+	var ownerData User=getUser(APIstub,ownerId)
 
-	var userData User=getUser(APIstub,sharedUserId)
+	//check if the owner actually owns the device
+	ownerHasTheDevice:=false
+	for i:=0;i<len(ownerData.OwnedDevices);i++{
+		if ownerData.OwnedDevices[i]==piId{
+			ownerHasTheDevice=true
+			break
+		}
+	}
+	if ownerHasTheDevice{
+		//fetch shared User
+		var userData User=getUser(APIstub,sharedUserId)
 
-	fmt.Println("buyer Data",userData)
-	//add pi to Accessed devices
-	userData.AccessedDevice=append(userData.AccessedDevice,piId)
-	userAsbytes,_:=json.Marshal(userData)
-	APIstub.PutState(userData.UserId,userAsbytes)
-	fmt.Println("shared user Data after update",userData)
+		fmt.Println("buyer Data",userData)
+		//add pi to Accessed devices
+		userData.AccessedDevice=append(userData.AccessedDevice,piId)
+		userAsbytes,_:=json.Marshal(userData)
+		APIstub.PutState(userData.UserId,userAsbytes)
 
-	return shim.Success(userAsbytes)
+		ownerAsBytes,_:=json.Marshal(ownerData)
+		fmt.Println("shared user Data after update",userData)
+
+		return shim.Success(ownerAsBytes)
+	} else{
+		return shim.Error(ownerId+" doesn't own the device "+piId)
+	}
+	return shim.Error("something went wrong in shareData function")
+
 }
 
 

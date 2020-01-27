@@ -3,11 +3,11 @@
     $(document).ready(function () {
         M.AutoInit();
 
-        
+
         document.getElementById("profilebtn").onclick = function () {
             location.href = "/profile";
         };
-        $(".dropdown-trigger").dropdown({ constrainWidth: false,isScrollable:true });
+        $(".dropdown-trigger").dropdown({ constrainWidth: false, isScrollable: true });
     });
 
     function buyDeviceNotify(buyer, owner, deviceId) {
@@ -15,7 +15,8 @@
         let dbRefObject = firebase.database().ref().child('notifications')
         let t = new Date().toUTCString()
         data = {
-            task:'buyDevice',
+
+            task: 'buyDevice',
             user: buyer,
             deviceId: deviceId
         }
@@ -28,7 +29,7 @@
         let dbRefObject = firebase.database().ref().child('notifications')
         let t = new Date().toUTCString()
         data = {
-            task:'getData',
+            task: 'getData',
             user: user,
             deviceId: deviceId
         }
@@ -38,54 +39,86 @@
     }
     function getNotifications(name) {
         let dbRefObject = firebase.database().ref().child('notifications').child(name).orderByKey()
-        notifications=[]
+        notifications = []
         dbRefObject.once('value', (snap) => {
-            
-            snap.forEach((childSnap)=>{
+
+            snap.forEach((childSnap) => {
                 // console.log(ci)
                 notifications.push(childSnap.val())
             })
             // var ul=document.getElementById('notifications')
             // console.log(ul);
-            
+
             // notifications.forEach(element => {
             //     console.log(element);
             //     var li=document.createElement('li')
             //     li.innerText=JSON.stringify(element)
             //     ul.append(li)
-                
+
             // });
 
-            
-            
-            
+
+
+
 
         })
     }
-    function buyPi(deviceId,owner,buyer){
-        var buyPiFormDeviceId=document.getElementById('buyPiFormDeviceId')
-        buyPiFormDeviceId.value=deviceId
-        var buyPiFormOwnerId=document.getElementById('buyPiFormOwnerId')
-        buyPiFormOwnerId.value=owner
-        var buyPiFormDeviceId=document.getElementById('buyPiFormBuyerId')
-        buyPiFormDeviceId.value=buyer
-    
+
+    function deleteBuyPiNotification(user) {
+        var key = document.getElementById('buyPiFormKey').value
+        console.log(key);
+
+        firebase.database().ref().child('notifications').child(name).child(key).remove()
     }
-    function getData(deviceId,owner,buyer){
-        var getDataFormDeviceId=document.getElementById('getDataFormDeviceId')
-        getDataFormDeviceId.value=deviceId
-        var bgetDataFormOwnerId=document.getElementById('getDataFormOwnerId')
-        getDataFormOwnerId.value=owner
-        var getDataFormDeviceId=document.getElementById('getDataFormBuyerId')
-        getDataFormDeviceId.value=buyer
-    
+    function deleteGetDataNotification(user) {
+        var key = document.getElementById('buyPiFormKey').value
+        console.log(key);
+        firebase.database().ref().child('notifications').child(name).child(key).remove()
     }
-    function homebtn() {
-        location.href = "/";
+    function buyPi(deviceId, owner, buyer, key) {
+        var buyPiFormDeviceId = document.getElementById('buyPiFormDeviceId')
+        buyPiFormDeviceId.value = deviceId
+        var buyPiFormOwnerId = document.getElementById('buyPiFormOwnerId')
+        buyPiFormOwnerId.value = owner
+        var buyPiFormDeviceId = document.getElementById('buyPiFormBuyerId')
+        buyPiFormDeviceId.value = buyer
+        var buyPiFormKey = document.getElementById('buyPiFormKey')
+        buyPiFormKey.value = key
+        console.log("in Buy Pi function ", key);
+
+    }
+    function getData(deviceId, owner, buyer, key) {
+        console.log("in get data function ", deviceId);
+        var getDataFormDeviceId = document.getElementById('getDataFormDeviceId')
+        getDataFormDeviceId.value = deviceId
+        console.log("in get data function ", owner);
+        var bgetDataFormOwnerId = document.getElementById('getDataFormOwnerId')
+        getDataFormOwnerId.value = owner
+        console.log("in get data function ", buyer);
+        var getDataFormDeviceId = document.getElementById('getDataFormBuyerId')
+        getDataFormDeviceId.value = buyer
+        console.log("in get data function ", key);
+        var getDataKey = document.getElementById('getDataFormKey')
+        getDataFormKey.value = key
+
+
+
+    }
+    function getPiId(piId) {
+        var getId = document.getElementById('piIdTerminal')
+        console.log(piId);
+        
+        getId.value = piId
+    }
+    function goToSendData() {
+        location.href = "/sendData";
     }
     function logoutbtn() {
         location.href = "/logout";
     }
-    
+    function name(params) {
+
+    }
+
 </script>
 <script src="../../scripts/firebasertbd.js"></script>
