@@ -134,7 +134,7 @@
     "image-size": "^0.6.3",
     "into-stream": "^4.0.0",
     "jasmine-core": "^2.99.1",
-    "jsdom": "^11.12.0",
+    "jsdom": "^16.5.0",
     "karma": "^4.1.0",
     "karma-browserify": "^6.0.0",
     "karma-chrome-launcher": "^2.0.0",
