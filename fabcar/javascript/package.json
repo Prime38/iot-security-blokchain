@@ -21,7 +21,7 @@
         "cookie-parser": "^1.4.4",
         "crypto": "^1.0.1",
         "ejs": "^2.7.1",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "fabric-ca-client": "~1.4.0",
         "fabric-network": "^1.4.4",
         "firebase": "^7.7.0",
